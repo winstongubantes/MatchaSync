@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>Matcha</Company>
+    <Authors>Winston Gubantes</Authors>
+    <PackageProjectUrl>https://github.com/winstongubantes/matcha.sync</PackageProjectUrl>
+    <Description>Sync Plugin For Xamarin</Description>
+    <Version>1.0.2</Version>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.4.118" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Matcha.Sync.Model\Matcha.Sync.Model.csproj" />
+  </ItemGroup>
+
+</Project>
