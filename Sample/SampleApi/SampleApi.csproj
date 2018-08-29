@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.1.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Matcha.Sync\Matcha.Sync.Api\Matcha.Sync.Api.csproj" />
+    <ProjectReference Include="..\..\Matcha.Sync\Matcha.Sync.Model\Matcha.Sync.Model.csproj" />
+  </ItemGroup>
+
+</Project>

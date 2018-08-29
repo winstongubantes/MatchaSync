@@ -2,9 +2,10 @@
 
 namespace Matcha.Sync.Model
 {
-    public interface ISynchronizableTable
+    public interface ISynchronizable
     {
-        string LocalId { get; set; } //THIS IS GUID
+        long Id { get; set; } //THIS IS SERVER ID
+        string LocalId { get; set; } //THIS IS GUID FOR MOBILE USE
         string UserId { get; set; } //THIS IS GUID
         string QueryId { get; set; }
         bool IsSynced { get; set; }

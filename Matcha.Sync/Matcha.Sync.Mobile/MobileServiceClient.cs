@@ -13,8 +13,8 @@ namespace Matcha.Sync.Mobile
 {
     public interface IMobileServiceClient
     {
-        IMobileServiceCrudTable<T> GetSyncTable<T>() where T : ISynchronizableTable;
-        void DefineSyncTable<T>() where T : ISynchronizableTable;
+        IMobileServiceCrudTable<T> GetSyncTable<T>() where T : ISynchronizable;
+        void DefineSyncTable<T>() where T : ISynchronizable;
         Task SyncAllData();
     }
 
@@ -34,7 +34,7 @@ namespace Matcha.Sync.Mobile
 
         public static MobileServiceClient Instance { get; } = new MobileServiceClient();
 
-        public IMobileServiceCrudTable<T> GetSyncTable<T>() where T : ISynchronizableTable
+        public IMobileServiceCrudTable<T> GetSyncTable<T>() where T : ISynchronizable
         {
             CheckIfInitialized();
 
@@ -46,7 +46,7 @@ namespace Matcha.Sync.Mobile
             return mst;
         }
 
-        public void DefineSyncTable<T>() where T : ISynchronizableTable
+        public void DefineSyncTable<T>() where T : ISynchronizable
         {
             if (_dictionarySync.ContainsKey(typeof(T).Name)) return;
 
@@ -84,7 +84,7 @@ namespace Matcha.Sync.Mobile
             if (string.IsNullOrWhiteSpace(_webApiUrl)) throw new ArgumentException("Not Initialized!");
         }
 
-        private class MobileServiceSyncTable<T> : IMobileServiceCrudTable<T> where T : ISynchronizableTable
+        private class MobileServiceSyncTable<T> : IMobileServiceCrudTable<T> where T : ISynchronizable
         {
             private readonly JsonSerializer _serializer = new JsonSerializer();
             private readonly string _webApiUrl;
@@ -99,6 +99,12 @@ namespace Matcha.Sync.Mobile
                 return DataStore.Instance.Get<IList<T>>(typeof(T).Name) ?? new List<T>();
             }
 
+            public IList<T> ToList(string queryId)
+            {
+                var resulList = ToList();
+                return resulList == null ? new List<T>() : resulList.Where(e=> e.QueryId == queryId).ToList();
+            }
+
             public void InsertOrUpdate(T data)
             {
                 var existingList = ToList();
@@ -107,6 +113,8 @@ namespace Matcha.Sync.Mobile
                     Update(data);
                     return;
                 }
+
+                
 
                 if (string.IsNullOrWhiteSpace(data.LocalId)) data.LocalId = Guid.NewGuid().ToString();
 
@@ -271,6 +279,7 @@ namespace Matcha.Sync.Mobile
     public interface IMobileServiceCrudTable<T> : IMobileServiceSyncTable
     {
         IList<T> ToList();
+        IList<T> ToList(string queryId);
         void InsertOrUpdate(T data);
         void Delete(T data);
     }
