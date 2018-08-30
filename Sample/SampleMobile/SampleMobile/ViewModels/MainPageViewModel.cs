@@ -5,15 +5,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Matcha.Sync.Mobile;
+using SampleMobile.Models;
 
 namespace SampleMobile.ViewModels
 {
     public class MainPageViewModel : ViewModelBase
     {
-        public MainPageViewModel(INavigationService navigationService) 
+        private readonly IMobileServiceClient _mobileServiceClient;
+
+        public MainPageViewModel(
+            INavigationService navigationService, 
+            IMobileServiceClient mobileServiceClient) 
             : base (navigationService)
         {
-            Title = "Main Page";
+            _mobileServiceClient = mobileServiceClient;
+            var table = _mobileServiceClient.GetSyncTable<TodoItem>();
+
+            table.PullAsync("test", table.CreateQuery().Where(e=> e.Name == "test"));
         }
     }
 }

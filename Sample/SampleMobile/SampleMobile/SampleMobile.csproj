@@ -14,8 +14,4 @@
     <ProjectReference Include="..\..\..\Matcha.Sync\Matcha.Sync.Model\Matcha.Sync.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>

@@ -19,25 +19,31 @@ namespace Matcha.Sync.Mobile
         bool IsExpired(string key);
         DateTime? GetExpiration(string key);
         DateTime? GetLastUpdate(string key);
+        IDataStore Init(string appId);
     }
 
     public class DataStore : IDataStore
     {
-        public static string ApplicationId { get; set; } = string.Empty;
-
-        static readonly Lazy<string> BaseCacheDir = new Lazy<string>(() => Path.Combine(Utils.GetBasePath(ApplicationId), "DataStore"));
-
-        readonly SQLiteConnection _db;
+        private  SQLiteConnection _db;
         readonly object _dblock = new object();
+        private JsonSerializerSettings _jsonSettings;
 
         static DataStore()
         {
         }
 
-        private JsonSerializerSettings _jsonSettings;
+        
         private DataStore()
+        { 
+
+        }
+
+        public static IDataStore Instance { get; } = new DataStore();
+
+
+        public IDataStore Init(string appId)
         {
-            var directory = BaseCacheDir.Value;
+            var directory = Path.Combine(Utils.GetBasePath(appId), "DataStore");
             var path = Path.Combine(directory, "DataStore.db");
             if (!Directory.Exists(directory))
             {
@@ -53,9 +59,9 @@ namespace Matcha.Sync.Mobile
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 TypeNameHandling = TypeNameHandling.All,
             };
-        }
 
-        public static IDataStore Instance { get; } = new DataStore();
+            return this;
+        }
 
         public void Add(string key, string data, TimeSpan expireIn)
         {

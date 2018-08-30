@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -63,9 +64,7 @@ namespace Matcha.Sync.Mobile
         public IMobileServiceClient Init(string webApiUrl)
         {
             _webApiUrl = webApiUrl;
-            var uri = new Uri(webApiUrl);
-            DataStore.ApplicationId = $"{uri.Host}";
-
+            DataStore.Instance.Init(_webApiUrl.Replace(":", "").Replace("/", "").Replace(".", ""));
             return this;
         }
 
@@ -128,18 +127,39 @@ namespace Matcha.Sync.Mobile
                 Update(data);
             }
 
+            public IMobileServiceTableQuery<T> CreateQuery() => new MobileServiceTableQuery<T>();
+
             public async Task PullAsync(string queryId, string paramQuery = "")
             {
                 await InvokePullData(queryId, paramQuery);
                 RegisterQueryInfo(new PullQueryInfo(queryId, paramQuery));
             }
 
+            public Task PullAsync(string queryId, IMobileServiceTableQuery<T> paramQuery)
+            {
+                var rseult = paramQuery.Query;
+                var t = rseult;
+
+                return Task.FromResult(0);
+                //await InvokePullData(queryId, paramQuery.ToString());
+                //RegisterQueryInfo(new PullQueryInfo(queryId, paramQuery.ToString()));
+            }
+
             public async Task PullAsync()
             {
                 var existingList = DataStore.Instance.Get<IList<PullQueryInfo>>(nameof(PullQueryInfo)) ?? new List<PullQueryInfo>();
-                foreach (var pullQueryInfo in existingList)
+
+                if (!existingList.Any())
                 {
-                    await InvokePullData(pullQueryInfo.QueryId, pullQueryInfo.ParamQuery);
+                    await InvokePullData(typeof(T).Name, string.Empty);
+                    RegisterQueryInfo(new PullQueryInfo(typeof(T).Name, string.Empty));
+                }
+                else
+                {
+                    foreach (var pullQueryInfo in existingList)
+                    {
+                        await InvokePullData(pullQueryInfo.QueryId, pullQueryInfo.ParamQuery);
+                    }
                 }
             }
 
@@ -274,6 +294,65 @@ namespace Matcha.Sync.Mobile
                 return httpClient;
             }
         }
+
+        private class MobileServiceTableQuery<T> : IMobileServiceTableQuery<T>
+        {
+            private StringBuilder _sb = new StringBuilder();
+
+            public IMobileServiceTableQuery<T> OrderBy<TKey>(Expression<Func<T, TKey>> predicate)
+            {
+                string expBody = ((LambdaExpression)predicate).Body.ToString();
+
+                var paramName = predicate.Parameters[0].Name;
+                var paramTypeName = predicate.Parameters[0].Type.Name;
+
+                return this;
+            }
+
+            public IMobileServiceTableQuery<T> OrderByDescending<TKey>(Expression<Func<T, TKey>> predicate)
+            {
+                string expBody = ((LambdaExpression)predicate).Body.ToString();
+
+                var paramName = predicate.Parameters[0].Name;
+                var paramTypeName = predicate.Parameters[0].Type.Name;
+
+                return this;
+            }
+
+            public IMobileServiceTableQuery<T> Where(Expression<Func<T, bool>> predicate)
+            {
+                string expBody = ((LambdaExpression)predicate).Body.ToString();
+
+                var paramName = predicate.Parameters[0].Name;
+                var paramTypeName = predicate.Parameters[0].Type.Name;
+
+                CheckQueryAppend();
+                _sb.Append(expBody);
+
+                return this;
+            }
+
+            public IMobileServiceTableQuery<T> Skip(int count)
+            {
+                CheckQueryAppend();
+                _sb.Append($"$skip={count}");
+                return this;
+            }
+
+            public IMobileServiceTableQuery<T> Take(int count)
+            {
+                CheckQueryAppend();
+                _sb.Append($"$top={count}");
+                return this;
+            }
+
+            public string Query => _sb.ToString();
+
+            private void CheckQueryAppend()
+            {
+                _sb.Append(!string.IsNullOrWhiteSpace(Query) ? "?" : "&");
+            }
+        }
     }
 
     public interface IMobileServiceCrudTable<T> : IMobileServiceSyncTable
@@ -282,12 +361,24 @@ namespace Matcha.Sync.Mobile
         IList<T> ToList(string queryId);
         void InsertOrUpdate(T data);
         void Delete(T data);
+        Task PullAsync(string queryId, IMobileServiceTableQuery<T> paramQuery);
+        Task PullAsync(string queryId, string paramQuery);
+        IMobileServiceTableQuery<T> CreateQuery();
     }
 
     public interface IMobileServiceSyncTable
     {
         Task PullAsync();
-        Task PullAsync(string queryId, string paramQuery);
         Task PushAsync();
+    }
+
+    public interface IMobileServiceTableQuery<T>
+    { 
+        IMobileServiceTableQuery<T> OrderBy<TKey>(Expression<Func<T, TKey>> predicate);
+        IMobileServiceTableQuery<T> OrderByDescending<TKey>(Expression<Func<T, TKey>> predicate);
+        IMobileServiceTableQuery<T> Where(Expression<Func<T, bool>> predicate);
+        IMobileServiceTableQuery<T> Skip(int count);
+        IMobileServiceTableQuery<T> Take(int count);
+        string Query { get; }
     }
 }

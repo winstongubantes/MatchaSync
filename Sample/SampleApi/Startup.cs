@@ -45,6 +45,13 @@ namespace SampleApi
             app.UseMvc(b =>
             {
                 b.MapODataServiceRoute("odata", "odata", GetEdmModel());
+
+                //TODO: Add the supported query
+                b.Select()
+                    .MaxTop(100)
+                    .OrderBy()
+                    .Filter()
+                    .Count();
             });
         }
 

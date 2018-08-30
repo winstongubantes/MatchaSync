@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApi", "..\Sample\Samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matcha.Sync.Api", "Matcha.Sync.Api\Matcha.Sync.Api.csproj", "{42E36CAD-8B1B-47BF-B6D8-7D7BDA0877E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleMobile", "..\Sample\SampleMobile\SampleMobile\SampleMobile.csproj", "{9547E3C4-D1E8-494E-98F7-B43DC339507D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleMobile", "..\Sample\SampleMobile\SampleMobile\SampleMobile.csproj", "{9547E3C4-D1E8-494E-98F7-B43DC339507D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleMobile.Android", "..\Sample\SampleMobile\SampleMobile.Android\SampleMobile.Android.csproj", "{7AF59B71-4B9B-48E4-8F13-B93180609AC2}"
 EndProject

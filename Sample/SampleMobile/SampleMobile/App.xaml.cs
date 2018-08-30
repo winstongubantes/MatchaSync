@@ -25,7 +25,7 @@ namespace SampleMobile
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterInstance(MobileServiceClient.Instance.Init(""));
+            containerRegistry.RegisterInstance(MobileServiceClient.Instance.Init("http://192.168.1.4/SampleApi/odata"));
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage>();
         }

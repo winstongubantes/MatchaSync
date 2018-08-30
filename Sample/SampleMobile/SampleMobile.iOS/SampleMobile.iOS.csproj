@@ -189,10 +189,17 @@
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="sqlite-net-pcl">
+      <Version>1.4.118</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="2.5.0.122203" />
     <PackageReference Include="Prism.DryIoc.Forms" Version="7.0.0.396" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Matcha.Sync\Matcha.Sync.Mobile\Matcha.Sync.Mobile.csproj">
+      <Project>{0c4f0c1c-7c03-4f1e-97d3-891f5d4c9959}</Project>
+      <Name>Matcha.Sync.Mobile</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SampleMobile\SampleMobile.csproj">
       <Project>{A682884C-CB44-4A89-B752-27BB634E0ABE}</Project>
       <Name>SampleMobile</Name>
