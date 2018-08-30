@@ -14,6 +14,7 @@ namespace SampleApi.Controllers
     public class TodoItemsController : BaseController<TodoItem>
     {
         private TodoItemContext _db;
+        private bool _isSoftDelete;
 
         public TodoItemsController(TodoItemContext db)
         {
@@ -24,17 +25,53 @@ namespace SampleApi.Controllers
 
         protected override Task Delete(TodoItem data)
         {
-            return Task.FromResult(0);
+            return Task.Run(() =>
+            {
+                var todo = _db.TodoItems.Find(data.Id);
+                if (todo == null) return;
+
+                //if you prefer soft delete then set the property is delete to true
+
+                if (_isSoftDelete) //This might be in your applications config
+                {
+                    todo.IsDeleted = true;
+                    _db.TodoItems.Update(todo);
+                }
+                else
+                {
+                    _db.TodoItems.Remove(todo);
+                }
+
+                _db.SaveChanges();
+            });
         }
 
         protected override Task Insert(TodoItem data)
         {
-            return Task.FromResult(0);
+            return Task.Run(() =>
+            {
+                _db.TodoItems.Add(data);
+                _db.SaveChanges();
+            });
         }
 
         protected override Task Update(TodoItem data)
         {
-            return Task.FromResult(0);
+            return Task.Run(() =>
+            {
+                var todo = _db.TodoItems.Find(data.Id);
+                if (todo == null) return;
+
+                //You can use AUTOMAPPER instead doing it manual
+                //but in our example i just keep it simple
+                todo.IsComplete = data.IsComplete;
+                todo.Name = data.Name;
+                todo.LastUpdated = data.LastUpdated;
+                todo.IsSynced = true;
+
+                _db.TodoItems.Update(todo);
+                _db.SaveChanges();
+            });
         }
     }
 }
