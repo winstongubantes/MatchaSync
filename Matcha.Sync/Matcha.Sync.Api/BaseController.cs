@@ -9,7 +9,7 @@ namespace Matcha.Sync.Api
 {
     public abstract class BaseController<T> : ODataController where T : ISynchronizable
     {
-        [EnableQuery]
+        [EnableQuery(AllowedQueryOptions = Microsoft.AspNet.OData.Query.AllowedQueryOptions.All)]
         public abstract IActionResult Get();
 
         [HttpPost]

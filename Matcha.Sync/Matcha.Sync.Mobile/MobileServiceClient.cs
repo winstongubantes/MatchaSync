@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -137,8 +138,8 @@ namespace Matcha.Sync.Mobile
 
             public Task PullAsync(string queryId, IMobileServiceTableQuery<T> paramQuery)
             {
-                var rseult = paramQuery.Query;
-                var t = rseult;
+                var result = paramQuery.Query;
+                var t = result;
 
                 return Task.FromResult(0);
                 //await InvokePullData(queryId, paramQuery.ToString());
@@ -297,61 +298,64 @@ namespace Matcha.Sync.Mobile
 
         private class MobileServiceTableQuery<T> : IMobileServiceTableQuery<T>
         {
-            private StringBuilder _sb = new StringBuilder();
+            private readonly StringBuilder _whereQuery = new StringBuilder();
+            private string _orderQuery = string.Empty;
+            private string _skipQuery = string.Empty;
+            private string _takeQuery = string.Empty;
+
+            public IMobileServiceTableQuery<T> Where(Expression<Func<T, bool>> predicate)
+            {
+                var oData = WhereBuilder.ToOdata(predicate);
+                _whereQuery.Append($"{WhereAndPreFix}{oData}");
+
+                return this;
+            }
 
             public IMobileServiceTableQuery<T> OrderBy<TKey>(Expression<Func<T, TKey>> predicate)
             {
-                string expBody = ((LambdaExpression)predicate).Body.ToString();
-
-                var paramName = predicate.Parameters[0].Name;
-                var paramTypeName = predicate.Parameters[0].Type.Name;
+                if (predicate.Body is MemberExpression exp)
+                {
+                    _orderQuery = $"{ParamPreFix}$orderby={exp.Member.Name}";
+                }
+                else
+                    throw new ArgumentException("Invalid query");
 
                 return this;
             }
 
             public IMobileServiceTableQuery<T> OrderByDescending<TKey>(Expression<Func<T, TKey>> predicate)
             {
-                string expBody = ((LambdaExpression)predicate).Body.ToString();
-
-                var paramName = predicate.Parameters[0].Name;
-                var paramTypeName = predicate.Parameters[0].Type.Name;
-
-                return this;
-            }
-
-            public IMobileServiceTableQuery<T> Where(Expression<Func<T, bool>> predicate)
-            {
-                string expBody = ((LambdaExpression)predicate).Body.ToString();
-
-                var paramName = predicate.Parameters[0].Name;
-                var paramTypeName = predicate.Parameters[0].Type.Name;
-
-                CheckQueryAppend();
-                _sb.Append(expBody);
+                if (predicate.Body is MemberExpression exp)
+                {
+                    _orderQuery = $"{ParamPreFix}$orderby={exp.Member.Name} desc";
+                }
+                else
+                    throw new ArgumentException("Invalid query");
 
                 return this;
             }
 
             public IMobileServiceTableQuery<T> Skip(int count)
             {
-                CheckQueryAppend();
-                _sb.Append($"$skip={count}");
+                _skipQuery = $"{ParamPreFix}$skip={count}";
                 return this;
             }
 
             public IMobileServiceTableQuery<T> Take(int count)
             {
-                CheckQueryAppend();
-                _sb.Append($"$top={count}");
+                _takeQuery = $"{ParamPreFix}$top={count}";
                 return this;
             }
 
-            public string Query => _sb.ToString();
+            public string Query => $"{QueryRaw}{CountPostFix}";
 
-            private void CheckQueryAppend()
-            {
-                _sb.Append(!string.IsNullOrWhiteSpace(Query) ? "?" : "&");
-            }
+            private string ParamPreFix => string.IsNullOrWhiteSpace(QueryRaw) ? "?" : "&";
+
+            private string WhereAndPreFix => string.IsNullOrWhiteSpace(_whereQuery.ToString()) ? string.Empty : " and ";
+
+            private string QueryRaw => $"{_skipQuery}{_takeQuery}{_orderQuery}{_whereQuery}";
+
+            private string CountPostFix => string.IsNullOrWhiteSpace(QueryRaw) ? "?$count=true" : "&$count=true";
         }
     }
 
