@@ -114,8 +114,6 @@ namespace Matcha.Sync.Mobile
                     return;
                 }
 
-                
-
                 if (string.IsNullOrWhiteSpace(data.LocalId)) data.LocalId = Guid.NewGuid().ToString();
 
                 existingList.Add(data);
@@ -136,14 +134,9 @@ namespace Matcha.Sync.Mobile
                 RegisterQueryInfo(new PullQueryInfo(queryId, paramQuery));
             }
 
-            public Task PullAsync(string queryId, IMobileServiceTableQuery<T> paramQuery)
+            public async Task PullAsync(string queryId, IMobileServiceTableQuery<T> paramQuery)
             {
-                var result = paramQuery.Query;
-                var t = result;
-
-                return Task.FromResult(0);
-                //await InvokePullData(queryId, paramQuery.ToString());
-                //RegisterQueryInfo(new PullQueryInfo(queryId, paramQuery.ToString()));
+                await PullAsync(queryId, paramQuery.Query);
             }
 
             public async Task PullAsync()
@@ -170,7 +163,46 @@ namespace Matcha.Sync.Mobile
                 var getAllNotSync = existingList.Where(e => !e.IsSynced);
 
                 if(getAllNotSync.Any())
-                    await PostWebDataAsync(getAllNotSync, GetControllerNameFromType(typeof(T).Name));
+                    await PostWebDataAsync<string>(getAllNotSync, GetControllerNameFromType(typeof(T).Name));
+            }
+
+            public async Task<ODataResult<T>> ExecuteQuery(string paramQuery)
+            {
+                var url = $"{_webApiUrl}/{GetControllerNameFromType(typeof(T).Name)}/{paramQuery}";
+                var oDataResult = await GetWebDataAsync(url);
+                return oDataResult;
+            }
+
+            public async Task<ODataResult<T>> ExecuteQuery(IMobileServiceTableQuery<T> paramQuery)
+            {
+                var url = $"{_webApiUrl}/{GetControllerNameFromType(typeof(T).Name)}/{paramQuery.Query}";
+                var oDataResult = await GetWebDataAsync(url);
+                return oDataResult;
+            }
+
+            public async Task<TF> PostWebDataAsync<TF>(object obj, string methodName)
+            {
+                TF result;
+
+                using (var client = GetHttpClient())
+                {
+                    var requestObject = JsonConvert.SerializeObject(obj);
+                    var dataContent = new StringContent(requestObject, Encoding.UTF8, "application/json");
+
+                    var response = await client.PostAsync($"{_webApiUrl}/{methodName}",
+                        dataContent, CancellationToken.None);
+
+                    response.EnsureSuccessStatusCode();
+
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    using (var reader = new StreamReader(stream))
+                    using (var json = new JsonTextReader(reader))
+                    {
+                        result = _serializer.Deserialize<TF>(json);
+                    }
+                }
+
+                return result;
             }
 
 
@@ -197,8 +229,8 @@ namespace Matcha.Sync.Mobile
             private async Task InvokePullData(string queryId, string paramQuery)
             {
                 var existingList = ToList().Where(e=> e.QueryId != queryId).ToList();
-                var url = $"{_webApiUrl}/{GetControllerNameFromType(typeof(T).Name)}/{paramQuery}";
-                var listResult = await GetWebDataAsync(url);
+                var oDataResult = await ExecuteQuery(paramQuery);
+                var listResult = oDataResult.DataList;
 
                 listResult.ForEach(e =>
                 {
@@ -244,34 +276,9 @@ namespace Matcha.Sync.Mobile
                 return $"{typeName}s";
             }
 
-            private async Task<string> PostWebDataAsync(object obj, string methodName)
+            private async Task<ODataResult<T>> GetWebDataAsync(string url)
             {
-                string result;
-
-                using (var client = GetHttpClient())
-                {
-                    var requestObject = JsonConvert.SerializeObject(obj);
-                    var dataContent = new StringContent(requestObject, Encoding.UTF8, "application/json");
-
-                    var response = await client.PostAsync($"{_webApiUrl}/{methodName}",
-                        dataContent, CancellationToken.None);
-
-                    response.EnsureSuccessStatusCode();
-
-                    using (var stream = await response.Content.ReadAsStreamAsync())
-                    using (var reader = new StreamReader(stream))
-                    using (var json = new JsonTextReader(reader))
-                    {
-                        result = _serializer.Deserialize<string>(json);
-                    }
-                }
-
-                return result;
-            }
-
-            public async Task<IList<T>> GetWebDataAsync(string url)
-            {
-                IList<T> result;
+                ODataResult<T> result;
 
                 using (var client = GetHttpClient())
                 {
@@ -282,7 +289,7 @@ namespace Matcha.Sync.Mobile
                     using (var reader = new StreamReader(stream))
                     using (var json = new JsonTextReader(reader))
                     {
-                        result = _serializer.Deserialize<IList<T>>(json);
+                        result = _serializer.Deserialize<ODataResult<T>>(json);
                     }
                 }
 
@@ -351,7 +358,7 @@ namespace Matcha.Sync.Mobile
 
             private string ParamPreFix => string.IsNullOrWhiteSpace(QueryRaw) ? "?" : "&";
 
-            private string WhereAndPreFix => string.IsNullOrWhiteSpace(_whereQuery.ToString()) ? string.Empty : " and ";
+            private string WhereAndPreFix => string.IsNullOrWhiteSpace(_whereQuery.ToString()) ? $"{ParamPreFix}$filter=" : " and ";
 
             private string QueryRaw => $"{_skipQuery}{_takeQuery}{_orderQuery}{_whereQuery}";
 
@@ -368,6 +375,9 @@ namespace Matcha.Sync.Mobile
         Task PullAsync(string queryId, IMobileServiceTableQuery<T> paramQuery);
         Task PullAsync(string queryId, string paramQuery);
         IMobileServiceTableQuery<T> CreateQuery();
+        Task<ODataResult<T>> ExecuteQuery(string paramQuery);
+        Task<ODataResult<T>> ExecuteQuery(IMobileServiceTableQuery<T> paramQuery);
+        Task<TF> PostWebDataAsync<TF>(object obj, string methodName);
     }
 
     public interface IMobileServiceSyncTable

@@ -76,18 +76,18 @@ namespace Matcha.Sync.Mobile
             if (expression is MethodCallExpression)
             {
                 var methodCall = (MethodCallExpression)expression;
-                // LIKE queries:
+                // TODO: fix Contain and Startswith Query
                 if (methodCall.Method == typeof(string).GetMethod("Contains", new[] { typeof(string) }))
                 {
-                    return WherePart.Concat(Recurse(ref i, methodCall.Object), "contains", Recurse(ref i, methodCall.Arguments[0], prefix: "(", postfix: ")"));
+                    return WherePart.Concat("contains", WherePart.Concat(Recurse(ref i, methodCall.Object), ",", Recurse(ref i, methodCall.Arguments[0])));
                 }
                 if (methodCall.Method == typeof(string).GetMethod("StartsWith", new[] { typeof(string) }))
                 {
-                    return WherePart.Concat(Recurse(ref i, methodCall.Object), "startswith", Recurse(ref i, methodCall.Arguments[0], prefix: "(", postfix: ")"));
+                    return WherePart.Concat("startswith", WherePart.Concat(Recurse(ref i, methodCall.Object), ",", Recurse(ref i, methodCall.Arguments[0])));
                 }
                 if (methodCall.Method == typeof(string).GetMethod("EndsWith", new[] { typeof(string) }))
                 {
-                    return WherePart.Concat(Recurse(ref i, methodCall.Object), "endswith", Recurse(ref i, methodCall.Arguments[0], prefix: "(", postfix: ")"));
+                    return WherePart.Concat("endswith", WherePart.Concat(Recurse(ref i, methodCall.Object), ",", Recurse(ref i, methodCall.Arguments[0])));
                 }
                 // IN queries:
                 if (methodCall.Method.Name == "Contains")
@@ -234,7 +234,7 @@ namespace Matcha.Sync.Mobile
             return new WherePart()
             {
                 Parameters = operand.Parameters,
-                ODataQuery = $"{@operator} ({operand.ODataQuery})"
+                ODataQuery = $"{@operator}({operand.ODataQuery})"
             };
         }
 
