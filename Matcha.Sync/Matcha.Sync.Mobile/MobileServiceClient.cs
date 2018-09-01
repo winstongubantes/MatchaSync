@@ -108,9 +108,16 @@ namespace Matcha.Sync.Mobile
             public void InsertOrUpdate(T data)
             {
                 var existingList = ToList();
-                if (existingList.Any(e => e.LocalId == data.LocalId))
+                var existingData = existingList.FirstOrDefault(e => e.LocalId == data.LocalId);
+                if (existingData != null)
                 {
-                    Update(data);
+                    //Check the date and if there is new changes not pushed
+                    if (existingData.IsSynced && 
+                        existingData.LastUpdated < data.LastUpdated)
+                    {
+                        Update(data); 
+                    }
+                    
                     return;
                 }
 
@@ -231,14 +238,33 @@ namespace Matcha.Sync.Mobile
                 var existingList = ToList().Where(e=> e.QueryId != queryId).ToList();
                 var oDataResult = await ExecuteQuery(paramQuery);
                 var listResult = oDataResult.DataList;
-
-                listResult.ForEach(e =>
+                
+                foreach (var resultVal in listResult)
                 {
-                    e.IsSynced = true;
-                    e.QueryId = queryId;
-                });
+                    var existingData = existingList.FirstOrDefault(e => e.LocalId == resultVal.LocalId);
+                    if (existingData != null)
+                    {
+                        //Check the date and if there is new changes not pushed
+                        if (existingData.IsSynced &&
+                            existingData.LastUpdated < resultVal.LastUpdated)
+                        {
+                            var indexOfData = existingList.IndexOf(existingData);
+                            existingList.RemoveAt(indexOfData);
 
-                existingList.AddRange(listResult);
+                            resultVal.LastUpdated = DateTime.Now;
+                            resultVal.QueryId = queryId;
+
+                            if (existingList.Count <= indexOfData)
+                                existingList.Add(resultVal);
+                            else
+                                existingList.Insert(indexOfData, resultVal);
+                        }
+                    }
+                    else
+                    {
+                        existingList.Add(resultVal);
+                    }
+                }
 
                 DataStore.Instance.Add(typeof(T).Name, existingList, TimeSpan.FromDays(30));
             }
