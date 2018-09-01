@@ -65,7 +65,12 @@ namespace Matcha.Sync.Mobile
         public IMobileServiceClient Init(string webApiUrl)
         {
             _webApiUrl = webApiUrl;
-            DataStore.Instance.Init(_webApiUrl.Replace(":", "").Replace("/", "").Replace(".", ""));
+
+            DataStore.Instance.Init(_webApiUrl
+                .Replace(":", "")
+                .Replace("/", "")
+                .Replace(".", ""));
+
             return this;
         }
 
@@ -94,6 +99,7 @@ namespace Matcha.Sync.Mobile
                 _webApiUrl = webApiUrl;
             }
 
+            #region Public Methods
             public IList<T> ToList()
             {
                 return DataStore.Instance.Get<IList<T>>(typeof(T).Name) ?? new List<T>();
@@ -102,7 +108,7 @@ namespace Matcha.Sync.Mobile
             public IList<T> ToList(string queryId)
             {
                 var resulList = ToList();
-                return resulList == null ? new List<T>() : resulList.Where(e=> e.QueryId == queryId).ToList();
+                return resulList == null ? new List<T>() : resulList.Where(e => e.QueryId == queryId).ToList();
             }
 
             public void InsertOrUpdate(T data)
@@ -112,12 +118,12 @@ namespace Matcha.Sync.Mobile
                 if (existingData != null)
                 {
                     //Check the date and if there is new changes not pushed
-                    if (existingData.IsSynced && 
+                    if (existingData.IsSynced &&
                         existingData.LastUpdated < data.LastUpdated)
                     {
-                        Update(data); 
+                        Update(data);
                     }
-                    
+
                     return;
                 }
 
@@ -150,17 +156,9 @@ namespace Matcha.Sync.Mobile
             {
                 var existingList = DataStore.Instance.Get<IList<PullQueryInfo>>(nameof(PullQueryInfo)) ?? new List<PullQueryInfo>();
 
-                if (!existingList.Any())
+                foreach (var pullQueryInfo in existingList)
                 {
-                    await InvokePullData(typeof(T).Name, string.Empty);
-                    RegisterQueryInfo(new PullQueryInfo(typeof(T).Name, string.Empty));
-                }
-                else
-                {
-                    foreach (var pullQueryInfo in existingList)
-                    {
-                        await InvokePullData(pullQueryInfo.QueryId, pullQueryInfo.ParamQuery);
-                    }
+                    await InvokePullData(pullQueryInfo.QueryId, pullQueryInfo.ParamQuery);
                 }
             }
 
@@ -169,7 +167,7 @@ namespace Matcha.Sync.Mobile
                 var existingList = ToList();
                 var getAllNotSync = existingList.Where(e => !e.IsSynced);
 
-                if(getAllNotSync.Any())
+                if (getAllNotSync.Any())
                     await PostWebDataAsync<string>(getAllNotSync, GetControllerNameFromType(typeof(T).Name));
             }
 
@@ -212,61 +210,75 @@ namespace Matcha.Sync.Mobile
                 return result;
             }
 
+            public long RecordCount(string queryId)
+            {
+                return DataStore.Instance.Get<long>($"RecordCount{queryId}");
+            }
 
+            #endregion
+
+            #region Private Methods
             private void Update(T data)
             {
                 var existingList = ToList();
                 var firstData = existingList.FirstOrDefault(e => e.LocalId == data.LocalId);
                 if (firstData == null) return;
 
-                var indexOfData = existingList.IndexOf(firstData);
-                existingList.RemoveAt(indexOfData);
-
-                data.IsSynced = false; //LET THE SYSTEM KNOW THIS IS FOR SYNC
-                data.LastUpdated = DateTime.Now;
-
-                if (existingList.Count <= indexOfData)
-                    existingList.Add(data);
-                else
-                    existingList.Insert(indexOfData, data);
+                UpdateData(data, firstData, existingList);
 
                 DataStore.Instance.Add(typeof(T).Name, existingList, TimeSpan.FromDays(30));
             }
 
+            private static void UpdateData(T data, T firstData, IList<T> existingList, bool isSync = false)
+            {
+                var indexOfData = RemoveByIndex(firstData, existingList);
+
+                data.IsSynced = isSync; //LET THE SYSTEM KNOW THIS IS FOR SYNC
+                data.LastUpdated = DateTime.Now;
+
+                AddByIndex(data, existingList, indexOfData);
+            }
+
+            private static int RemoveByIndex(T firstData, IList<T> existingList)
+            {
+                var indexOfData = existingList.IndexOf(firstData);
+                existingList.RemoveAt(indexOfData);
+                return indexOfData;
+            }
+
+            private static void AddByIndex(T data, IList<T> existingList, int indexOfData)
+            {
+                if (existingList.Count <= indexOfData)
+                    existingList.Add(data);
+                else
+                    existingList.Insert(indexOfData, data);
+            }
+
             private async Task InvokePullData(string queryId, string paramQuery)
             {
-                var existingList = ToList().Where(e=> e.QueryId != queryId).ToList();
+                var existingList = ToList();
                 var oDataResult = await ExecuteQuery(paramQuery);
                 var listResult = oDataResult.DataList;
-                
+
                 foreach (var resultVal in listResult)
                 {
-                    var existingData = existingList.FirstOrDefault(e => e.LocalId == resultVal.LocalId);
-                    if (existingData != null)
-                    {
-                        //Check the date and if there is new changes not pushed
-                        if (existingData.IsSynced &&
-                            existingData.LastUpdated < resultVal.LastUpdated)
-                        {
-                            var indexOfData = existingList.IndexOf(existingData);
-                            existingList.RemoveAt(indexOfData);
-
-                            resultVal.LastUpdated = DateTime.Now;
-                            resultVal.QueryId = queryId;
-
-                            if (existingList.Count <= indexOfData)
-                                existingList.Add(resultVal);
-                            else
-                                existingList.Insert(indexOfData, resultVal);
-                        }
-                    }
-                    else
-                    {
-                        existingList.Add(resultVal);
-                    }
+                    AggregateListByCondition(queryId, resultVal, existingList);
                 }
 
+                DataStore.Instance.Add($"RecordCount{queryId}", oDataResult.OdataCount, TimeSpan.FromDays(30));
                 DataStore.Instance.Add(typeof(T).Name, existingList, TimeSpan.FromDays(30));
+            }
+
+            private static void AggregateListByCondition(string queryId, T resultVal, IList<T> existingList)
+            {
+                resultVal.QueryId = queryId;
+                var existingData = existingList.FirstOrDefault(e => e.LocalId == resultVal.LocalId);
+
+                //Do Not UPDATE data that has changes(IsSynced == false)
+                if (existingData == null)
+                    existingList.Add(resultVal);
+                else if(existingData.IsSynced)
+                    UpdateData(resultVal, existingData, existingList, true);
             }
 
             private void RegisterQueryInfo(PullQueryInfo queryInfo)
@@ -326,7 +338,8 @@ namespace Matcha.Sync.Mobile
             {
                 var httpClient = new HttpClient();
                 return httpClient;
-            }
+            } 
+            #endregion
         }
 
         private class MobileServiceTableQuery<T> : IMobileServiceTableQuery<T>
@@ -336,6 +349,7 @@ namespace Matcha.Sync.Mobile
             private string _skipQuery = string.Empty;
             private string _takeQuery = string.Empty;
 
+            #region Public Methods
             public IMobileServiceTableQuery<T> Where(Expression<Func<T, bool>> predicate)
             {
                 var oData = WhereBuilder.ToOdata(predicate);
@@ -378,7 +392,8 @@ namespace Matcha.Sync.Mobile
             {
                 _takeQuery = $"{ParamPreFix}$top={count}";
                 return this;
-            }
+            } 
+            #endregion
 
             public string Query => $"{QueryRaw}{CountPostFix}";
 
@@ -404,6 +419,7 @@ namespace Matcha.Sync.Mobile
         Task<ODataResult<T>> ExecuteQuery(string paramQuery);
         Task<ODataResult<T>> ExecuteQuery(IMobileServiceTableQuery<T> paramQuery);
         Task<TF> PostWebDataAsync<TF>(object obj, string methodName);
+        long RecordCount(string queryId);
     }
 
     public interface IMobileServiceSyncTable

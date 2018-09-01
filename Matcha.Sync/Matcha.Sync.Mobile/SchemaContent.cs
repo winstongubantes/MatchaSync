@@ -8,16 +8,15 @@ namespace Matcha.Sync.Mobile
         [PrimaryKey]
         public string Id { get; set; }
 
-
-        /// <summary>
-        /// Additional ETag to set for Http Caching
-        /// </summary>
-        public string ETag { get; set; }
-
         /// <summary>
         /// Main Contents.
         /// </summary>
         public string Contents { get; set; }
+
+        /// <summary>
+        /// Number of records, to be used for paging
+        /// </summary>
+        public long RecordCount { get; set; }
 
         /// <summary>
         /// Expiration data of the object, stored in UTC
