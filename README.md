@@ -2,7 +2,7 @@
 A plugin library for offline data sync, provides an SDK library for both Client & Server that makes it easy for developers to create apps that are functional without a network connection. But is also versatile that it can handle custom webapi calls (non-Odata webserver).
  
 ## Preview
- ![alt text](https://github.com/winstongubantes/matcha.validation/blob/master/Images/valid.gif "Sample In Action")
+
 
  
 ### Setup for WebApi
@@ -88,9 +88,9 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
  {
      public override bool FinishedLaunching(UIApplication app, NSDictionary options)
      {
-         ....// Code for init was here
          MobileServiceClient.Init("http://YOUR_IP_HERE/SampleApi/odata");
          
+           ....// Code for init was here
          return base.FinishedLaunching(app, options);
      }
  }
@@ -107,9 +107,10 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
  {
      protected override void OnCreate(Bundle bundle)
      {
+	     MobileServiceClient.Init("http://YOUR_IP_HERE/SampleApi/odata");
+	     
+	     base.OnCreate(bundle);
          ....// Code for init was here
-
-         MobileServiceClient.Init("http://YOUR_IP_HERE/SampleApi/odata");
      }
  }
  
@@ -150,14 +151,14 @@ Then we are able to use it anywhere, in this case in our viewmodel.
 	
 	public void InsertData(Todo Item)
 	{
-			var todoItemTable = _mobileServiceClient.GetSyncTable<TodoItem>();
+		var todoItemTable = _mobileServiceClient.GetSyncTable<TodoItem>();
 
-			//Inserts or Update a Data
-			todoItemTable.InsertOrUpdate(new TodoItem
-			{
-			    Name = "Task Name"
-			    ... You Data here
-			});
+		//Inserts or Update a Data
+		todoItemTable.InsertOrUpdate(new TodoItem
+		{
+			Name = "Task Name"
+			... You Data here
+		});
 	}
 }
  ```

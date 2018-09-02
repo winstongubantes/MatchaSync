@@ -22,10 +22,10 @@ namespace SampleMobile.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            MobileServiceClient.Init("http://192.168.1.6/SampleApi/odata");
+
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App(new iOSInitializer()));
-
-            MobileServiceClient.Init("http://192.168.1.6/SampleApi/odata");
 
             return base.FinishedLaunching(app, options);
         }

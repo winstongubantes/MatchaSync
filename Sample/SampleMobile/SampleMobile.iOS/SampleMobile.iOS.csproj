@@ -198,5 +198,11 @@
     <PackageReference Include="Xamarin.Forms" Version="2.5.0.122203" />
     <PackageReference Include="Prism.DryIoc.Forms" Version="7.0.0.396" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SampleMobile\SampleMobile.csproj">
+      <Project>{9547e3c4-d1e8-494e-98f7-b43dc339507d}</Project>
+      <Name>SampleMobile</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
