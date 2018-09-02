@@ -172,7 +172,7 @@ namespace Matcha.Sync.Mobile
                 var getAllNotSync = existingList.Where(e => !e.IsSynced);
 
                 if (getAllNotSync.Any())
-                    await PostWebDataAsync<string>(getAllNotSync, GetControllerNameFromType(typeof(T).Name));
+                    await PostWebDataAsync<object>(getAllNotSync, GetControllerNameFromType(typeof(T).Name));
             }
 
             public async Task<ODataResult<T>> ExecuteQuery(string paramQuery)
