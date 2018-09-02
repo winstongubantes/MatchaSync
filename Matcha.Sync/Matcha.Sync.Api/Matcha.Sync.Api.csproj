@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.3</Version>
+    <Authors>Winston Gubantes</Authors>
+    <Company>Matcha</Company>
+    <PackageProjectUrl>https://github.com/winstongubantes/matcha.sync</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
