@@ -119,15 +119,13 @@ namespace Matcha.Sync.Mobile
             {
                 var existingList = ToList();
                 var existingData = existingList.FirstOrDefault(e => e.LocalId == data.LocalId);
+
+                data.IsSynced = false; //new data must be flagged as NOT synced
+
                 if (existingData != null)
                 {
-                    //Check the date and if there is new changes not pushed
-                    if (existingData.IsSynced &&
-                        existingData.LastUpdated < data.LastUpdated)
-                    {
-                        Update(data);
-                    }
-
+                    //Since this is just a local data no need to check if it is "IsSynced"
+                    Update(data);
                     return;
                 }
 
@@ -140,6 +138,7 @@ namespace Matcha.Sync.Mobile
             public void Delete(T data)
             {
                 data.IsDeleted = false;
+                data.IsSynced = false;
                 Update(data);
             }
 
@@ -230,18 +229,15 @@ namespace Matcha.Sync.Mobile
                 var firstData = existingList.FirstOrDefault(e => e.LocalId == data.LocalId);
                 if (firstData == null) return;
 
-                UpdateData(data, firstData, existingList);
+                UpdateDataFromExistingList(data, firstData, existingList);
 
                 DataStore.Instance.Add(typeof(T).Name, existingList, TimeSpan.FromDays(30));
             }
 
-            private static void UpdateData(T data, T firstData, IList<T> existingList, bool isSync = false)
+            private static void UpdateDataFromExistingList(T data, T firstData, IList<T> existingList)
             {
                 var indexOfData = RemoveByIndex(firstData, existingList);
-
-                data.IsSynced = isSync; //LET THE SYSTEM KNOW THIS IS FOR SYNC
                 data.LastUpdated = DateTime.Now;
-
                 AddByIndex(data, existingList, indexOfData);
             }
 
@@ -279,11 +275,13 @@ namespace Matcha.Sync.Mobile
             {
                 var existingData = existingList.FirstOrDefault(e => e.LocalId == resultVal.LocalId);
 
+                resultVal.IsSynced = true; //new data must be flagged as NOT synced
+
                 //Do Not UPDATE data that has changes(IsSynced == false)
                 if (existingData == null)
                     existingList.Add(resultVal);
                 else if(existingData.IsSynced)
-                    UpdateData(resultVal, existingData, existingList, true);
+                    UpdateDataFromExistingList(resultVal, existingData, existingList);
             }
 
             private void RegisterQueryInfo(PullQueryInfo queryInfo)
