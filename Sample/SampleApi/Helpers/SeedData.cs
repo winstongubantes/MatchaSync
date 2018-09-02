@@ -24,7 +24,8 @@ namespace SampleApi.Helpers
                     Id = i,
                     IsComplete = i % 2 == 0,
                     Name = $"Task {i}",
-                    LastUpdated = dateCreated
+                    LastUpdated = dateCreated,
+                    LocalId = Guid.NewGuid().ToString()
                 });
             }
 

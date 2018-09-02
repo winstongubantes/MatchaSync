@@ -6,7 +6,6 @@ namespace Matcha.Sync.Model
     {
         long Id { get; set; } //THIS IS SERVER ID
         string LocalId { get; set; } //THIS IS GUID FOR MOBILE USE
-        string QueryId { get; set; }
         bool IsSynced { get; set; }
         bool IsDeleted { get; set; }
         DateTime LastUpdated { get; set; }

@@ -63,6 +63,18 @@ namespace SampleMobile.ViewModels
            {
                await table.PullAsync("test", t1);
                var data = table.ToList("test");
+               var lastData = data.LastOrDefault();
+
+               table.InsertOrUpdate( new TodoItem
+               {
+                   Id = (lastData?.Id ?? 0) + 1,
+                   Name = "New Test Task",
+                   LastUpdated = DateTime.Now
+               });
+
+               await table.PushAsync();
+               await table.PullAsync("test", t1);
+               data = table.ToList("test");
            });
         }
     }

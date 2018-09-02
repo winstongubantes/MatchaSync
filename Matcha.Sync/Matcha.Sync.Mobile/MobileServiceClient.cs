@@ -108,7 +108,11 @@ namespace Matcha.Sync.Mobile
             public IList<T> ToList(string queryId)
             {
                 var resulList = ToList();
-                return resulList == null ? new List<T>() : resulList.Where(e => e.QueryId == queryId).ToList();
+                var queryInfo = GetQueryInfo(queryId);
+                return resulList == null || queryInfo == null ? 
+                    new List<T>() : 
+                    resulList.Where(e => queryInfo.IdList.Any(x=> x == e.Id))
+                        .ToList();
             }
 
             public void InsertOrUpdate(T data)
@@ -143,8 +147,9 @@ namespace Matcha.Sync.Mobile
 
             public async Task PullAsync(string queryId, string paramQuery = "")
             {
-                await InvokePullData(queryId, paramQuery);
-                RegisterQueryInfo(new PullQueryInfo(queryId, paramQuery));
+                var oDataResult = await InvokePullData(paramQuery);
+                var idList = oDataResult.DataList.Select(e => e.Id).ToList();
+                RegisterQueryInfo(new PullQueryInfo(queryId, paramQuery, oDataResult.OdataCount, idList));
             }
 
             public async Task PullAsync(string queryId, IMobileServiceTableQuery<T> paramQuery)
@@ -158,7 +163,7 @@ namespace Matcha.Sync.Mobile
 
                 foreach (var pullQueryInfo in existingList)
                 {
-                    await InvokePullData(pullQueryInfo.QueryId, pullQueryInfo.ParamQuery);
+                    await PullAsync(pullQueryInfo.QueryId, pullQueryInfo.ParamQuery);
                 }
             }
 
@@ -212,7 +217,8 @@ namespace Matcha.Sync.Mobile
 
             public long RecordCount(string queryId)
             {
-                return DataStore.Instance.Get<long>($"RecordCount{queryId}");
+                var queryInfo = GetQueryInfo(queryId);
+                return queryInfo?.RecordCount ?? 0;
             }
 
             #endregion
@@ -254,7 +260,7 @@ namespace Matcha.Sync.Mobile
                     existingList.Insert(indexOfData, data);
             }
 
-            private async Task InvokePullData(string queryId, string paramQuery)
+            private async Task<ODataResult<T>> InvokePullData(string paramQuery)
             {
                 var existingList = ToList();
                 var oDataResult = await ExecuteQuery(paramQuery);
@@ -262,16 +268,15 @@ namespace Matcha.Sync.Mobile
 
                 foreach (var resultVal in listResult)
                 {
-                    AggregateListByCondition(queryId, resultVal, existingList);
+                    AggregateListByCondition(resultVal, existingList);
                 }
 
-                DataStore.Instance.Add($"RecordCount{queryId}", oDataResult.OdataCount, TimeSpan.FromDays(30));
                 DataStore.Instance.Add(typeof(T).Name, existingList, TimeSpan.FromDays(30));
+                return oDataResult;
             }
 
-            private static void AggregateListByCondition(string queryId, T resultVal, IList<T> existingList)
+            private static void AggregateListByCondition(T resultVal, IList<T> existingList)
             {
-                resultVal.QueryId = queryId;
                 var existingData = existingList.FirstOrDefault(e => e.LocalId == resultVal.LocalId);
 
                 //Do Not UPDATE data that has changes(IsSynced == false)
@@ -302,6 +307,20 @@ namespace Matcha.Sync.Mobile
                 }
 
                 DataStore.Instance.Add(nameof(PullQueryInfo), existingList, TimeSpan.FromDays(30));
+            }
+
+            private IList<PullQueryInfo> GetQueryInfoList()
+            {
+                var existingList = DataStore.Instance.Get<IList<PullQueryInfo>>(nameof(PullQueryInfo)) ?? 
+                                   new List<PullQueryInfo>();
+                return existingList;
+            }
+
+            private PullQueryInfo GetQueryInfo(string queryId)
+            {
+                var existingList = GetQueryInfoList();
+                var firstData = existingList.FirstOrDefault(e => e.QueryId == queryId);
+                return firstData;
             }
 
             private string GetControllerNameFromType(string typeName)
