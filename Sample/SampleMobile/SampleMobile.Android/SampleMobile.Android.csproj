@@ -56,6 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Matcha.Sync.Mobile">
+      <Version>1.0.5</Version>
+    </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.4.118</Version>
     </PackageReference>
@@ -94,12 +97,8 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Matcha.Sync\Matcha.Sync.Mobile\Matcha.Sync.Mobile.csproj">
-      <Project>{0c4f0c1c-7c03-4f1e-97d3-891f5d4c9959}</Project>
-      <Name>Matcha.Sync.Mobile</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SampleMobile\SampleMobile.csproj">
-      <Project>{A682884C-CB44-4A89-B752-27BB634E0ABE}</Project>
+      <Project>{9547e3c4-d1e8-494e-98f7-b43dc339507d}</Project>
       <Name>SampleMobile</Name>
     </ProjectReference>
   </ItemGroup>

@@ -23,7 +23,8 @@ namespace Matcha.Sync.Mobile
     public sealed class MobileServiceClient : IMobileServiceClient
     {
         private readonly Dictionary<string, IMobileServiceSyncTable> _dictionarySync;
-        private string _webApiUrl;
+        private static string _webApiUrl;
+        private static IMobileServiceClient _instance;
 
         static MobileServiceClient()
         {
@@ -34,7 +35,7 @@ namespace Matcha.Sync.Mobile
             _dictionarySync = new Dictionary<string, IMobileServiceSyncTable>();
         }
 
-        public static MobileServiceClient Instance { get; } = new MobileServiceClient();
+        public static IMobileServiceClient Instance { get; } = _instance ?? (_instance = new MobileServiceClient());
 
         public IMobileServiceCrudTable<T> GetSyncTable<T>() where T : ISynchronizable
         {
@@ -62,7 +63,7 @@ namespace Matcha.Sync.Mobile
             await PullAsync();
         }
 
-        public IMobileServiceClient Init(string webApiUrl)
+        public static void Init(string webApiUrl)
         {
             _webApiUrl = webApiUrl;
 
@@ -70,8 +71,6 @@ namespace Matcha.Sync.Mobile
                 .Replace(":", "")
                 .Replace("/", "")
                 .Replace(".", ""));
-
-            return this;
         }
 
         private async Task PullAsync()

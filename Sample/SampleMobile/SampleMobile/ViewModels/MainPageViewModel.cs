@@ -41,6 +41,12 @@ namespace SampleMobile.ViewModels
             var t6 = table.CreateQuery().Where(e => e.Name.EndsWith("Task")).Query;
             var t7 = table.CreateQuery().Where(e => e.Name.Contains("Task") && e.Name.EndsWith("Task")).Query;
 
+            //var todoItemTable = MobileServiceClient.Instance.GetSyncTable<TodoItem>();
+            //todoItemTable.InsertOrUpdate(new TodoItem
+            //{
+            //    Name = "Task Name"
+            //});
+
             Debug.WriteLine(t);
            // Debug.WriteLine(t1);
             Debug.WriteLine(t2);

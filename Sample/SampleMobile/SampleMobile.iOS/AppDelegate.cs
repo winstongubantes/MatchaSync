@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using Matcha.Sync.Mobile;
 using Prism;
 using Prism.Ioc;
 using UIKit;
@@ -23,6 +24,8 @@ namespace SampleMobile.iOS
         {
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App(new iOSInitializer()));
+
+            MobileServiceClient.Init("http://192.168.1.6/SampleApi/odata");
 
             return base.FinishedLaunching(app, options);
         }

@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using Matcha.Sync.Mobile;
 using Prism;
 using Prism.Ioc;
 
@@ -18,6 +19,8 @@ namespace SampleMobile.Droid
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
             LoadApplication(new App(new AndroidInitializer()));
+
+            MobileServiceClient.Init("http://192.168.1.6/SampleApi/odata");
         }
     }
 

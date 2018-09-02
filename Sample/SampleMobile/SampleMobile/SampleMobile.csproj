@@ -5,13 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Matcha.Sync.Mobile" Version="1.0.5" />
     <PackageReference Include="Xamarin.Forms" Version="2.5.0.122203" />
     <PackageReference Include="Prism.DryIoc.Forms" Version="7.0.0.396" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Matcha.Sync\Matcha.Sync.Mobile\Matcha.Sync.Mobile.csproj" />
-    <ProjectReference Include="..\..\..\Matcha.Sync\Matcha.Sync.Model\Matcha.Sync.Model.csproj" />
   </ItemGroup>
 
 </Project>
