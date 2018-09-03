@@ -3,10 +3,16 @@ using Prism.Mvvm;
 using Prism.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Matcha.Sync.Mobile;
+using Plugin.Connectivity.Abstractions;
 using Prism.Services;
 using SampleMobile.Models;
 
@@ -16,72 +22,117 @@ namespace SampleMobile.ViewModels
     {
         private readonly IMobileServiceClient _mobileServiceClient;
         private readonly IDeviceService _deviceService;
+        private readonly IMobileServiceCrudTable<TodoItem> _crudTodotTable;
+        private readonly IConnectivity _connectivity;
+        private readonly IPageDialogService _dialogService;
 
         public MainPageViewModel(
             INavigationService navigationService, 
             IMobileServiceClient mobileServiceClient, 
-            IDeviceService deviceService) 
+            IDeviceService deviceService, 
+            IConnectivity connectivity, 
+            IPageDialogService dialogService) 
             : base (navigationService)
         {
             _mobileServiceClient = mobileServiceClient;
             _deviceService = deviceService;
-            var table = _mobileServiceClient.GetSyncTable<TodoItem>();
+            _connectivity = connectivity;
+            _dialogService = dialogService;
+            _crudTodotTable = _mobileServiceClient.GetSyncTable<TodoItem>();
+        }
 
-            var t = table.CreateQuery().Where(e => e.Name == "Task" || e.Name == "1").Query;
-            var t1 = table.CreateQuery()
-                .Where(e => e.Name.Contains("Task") || e.Name == "1")
-                .Where(e => e.Id == 1)
-                .Where(e => !e.IsComplete);
+        public override void OnNavigatedTo(NavigationParameters parameters)
+        {
+            _deviceService.BeginInvokeOnMainThread(async () =>
+            {
+                await LoadTasks();
+            });
+        }
 
+        private async Task LoadTasks()
+        {
+            if (!_connectivity.IsConnected)
+            {
+                await _dialogService.DisplayAlertAsync("", "No Internet!", "Ok");
+                return;
+            }
 
-            var t2 = table.CreateQuery().Where(e => e.Id == 1).Query;
-            var t3 = table.CreateQuery().Where(e => !e.IsComplete).Query;
-            var t4 = table.CreateQuery().Where(e => e.Name.Contains("Task")).Query;
-            var t5 = table.CreateQuery().Where(e => e.Name.StartsWith("Task")).Query;
-            var t6 = table.CreateQuery().Where(e => e.Name.EndsWith("Task")).Query;
-            var t7 = table.CreateQuery().Where(e => e.Name.Contains("Task") && e.Name.EndsWith("Task")).Query;
+            IsBusy = true;
 
-            //var todoItemTable = MobileServiceClient.Instance.GetSyncTable<TodoItem>();
-            //todoItemTable.InsertOrUpdate(new TodoItem
-            //{
-            //    Name = "Task Name"
-            //});
+            var query = _crudTodotTable.CreateQuery();
+                //.Where(e => !e.IsComplete)
+                //.Take(20);
 
-            Debug.WriteLine(t);
-           // Debug.WriteLine(t1);
-            Debug.WriteLine(t2);
-            Debug.WriteLine(t3);
-            Debug.WriteLine(t4);
-            Debug.WriteLine(t5);
-            Debug.WriteLine(t6);
-            Debug.WriteLine(t7);
+            await _crudTodotTable.PullAsync("testquery", query);
+            var data = _crudTodotTable.ToList("testquery");
+            TodoItems = new ObservableCollection<TodoItem>(data);
 
-                //[0:] Name eq 'Task' or Name eq '1'&$count=true
-                //[0:] Name eq 'Task' or Name eq '1' and Id eq 1 and not(IsComplete eq true)&$count=true
-                //[0:] Id eq 1&$count=true
-                //[0:] not(IsComplete eq true)&$count=true
-                //[0:] contains(Name , 'Task')&$count=true
-                //[0:] startswith(Name , 'Task')&$count=true
-                //[0:] endswith(Name , 'Task')&$count=true
-                //[0:] contains(Name , 'Task') and endswith(Name , 'Task')&$count=true
+            IsBusy = false;
+        }
 
-           _deviceService.BeginInvokeOnMainThread(async () =>
-           {
-               await table.PullAsync("test", t1);
-               var data = table.ToList("test");
-               var lastData = data.LastOrDefault();
+        private ICommand _toggleCompleteCommand;
+        public ICommand ToggleCompleteCommand => _toggleCompleteCommand ?? (_toggleCompleteCommand = new DelegateCommand<TodoItem>(ToggleComplete));
 
-               table.InsertOrUpdate( new TodoItem
-               {
-                   Id = (lastData?.Id ?? 0) + 1,
-                   Name = "New Test Task",
-                   LastUpdated = DateTime.Now
-               });
+        private ICommand _syncCommand;
+        public ICommand SyncCommand => _syncCommand ?? (_syncCommand = new DelegateCommand(async () => await SyncToServer()));
 
-               await table.PushAsync();
-               await table.PullAsync("test", t1);
-               data = table.ToList("test");
-           });
+        private ICommand _addTaskCommand;
+        public ICommand AddTaskCommand => _addTaskCommand ?? (_addTaskCommand = new DelegateCommand(async ()=> await CreateNewTask()));
+
+        private async Task CreateNewTask()
+        {
+            var lastData = TodoItems.LastOrDefault();
+
+            if (_connectivity.IsConnected && !string.IsNullOrWhiteSpace(NewTaskValue))
+            {
+                _crudTodotTable.InsertOrUpdate(new TodoItem
+                {
+                    Id = (lastData?.Id ?? 0) + 1,
+                    Name = NewTaskValue,
+                    LastUpdated = DateTime.Now
+                });
+
+                NewTaskValue = string.Empty;
+                IsBusy = true;
+                await _crudTodotTable.PushAsync();
+                IsBusy = false;
+            }
+
+           
+            await LoadTasks();
+        }
+
+        private async Task SyncToServer()
+        {
+            IsBusy = true;
+            await _mobileServiceClient.SyncAllData();
+            IsBusy = false;
+        }
+
+        private void ToggleComplete(TodoItem item)
+        {
+            item.IsComplete = !item.IsComplete;
+            _crudTodotTable.InsertOrUpdate(item);
+
+            //refresh locally
+            var data = _crudTodotTable.ToList("testquery");
+            TodoItems = new ObservableCollection<TodoItem>(data);
+        }
+
+        private string _newTaskValue;
+
+        public string NewTaskValue
+        {
+            get => _newTaskValue;
+            set => SetProperty(ref _newTaskValue, value);
+        }
+
+        private ObservableCollection<TodoItem> _todoItems;
+
+        public ObservableCollection<TodoItem> TodoItems
+        {
+            get => _todoItems;
+            set => SetProperty(ref _todoItems, value);
         }
     }
 }
