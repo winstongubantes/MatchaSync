@@ -1,8 +1,8 @@
 # Matcha Sync Plugin for Xamarin.Forms
-A plugin library for offline data sync, provides an SDK library for both Client & Server that makes it easy for developers to create apps that are functional without a network connection. But is also versatile that it can handle custom webapi calls (non-Odata webserver).
+A plugin library for offline data sync, provides an SDK library for both Client & Server that makes it easy for developers to create apps that are functional without a network connection. But is also versatile that it can handle custom webapi calls (non-Odata webserver), The reason for creating a plugin for data synchronization it to provide developers other alternative which is FREE and customizable and drop dead simple. 
  
 ## Preview
-
+ ![alt text](https://github.com/winstongubantes/matcha.validation/blob/master/Images/valid.gif "Sample In Action")
 
  
 ### Setup for WebApi
@@ -75,10 +75,14 @@ Synchronizable is a generic class for your DTO model it is inherited from ISynch
  }
  ```
 
+#### The Good thing!
+
+Matcha.Sync.Mobile doesnt enforce you to use BaseController from Matcha.Sync.Api, you can create  WebApi  project from a scratch and you can still use Matcha.Sync.Mobile synchronization feature and start working with an offline data on your mobile. 
+
  
 ### Setup for Mobile 
  
- ### For iOS
+#### For iOS
  
 You call the init after all libraries initialization in FinishedLaunching method in FormsApplicationDelegate class.
  
@@ -97,7 +101,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
  
  ```
 
- ### For Android
+#### For Android
  
 You call the init after all libraries initialization in MainActivity class.
  
@@ -115,55 +119,45 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
  }
  
  ```
- 
- ### Inserting Data
- 
-The plain and old way in adding data using MobileServiceClient is by using its static instance .
- 
- ```csharp
-var todoItemTable = MobileServiceClient.Instance.GetSyncTable<TodoItem>();
 
-//Inserts or Update a Data
-todoItemTable.InsertOrUpdate(new TodoItem
-{
-    Name = "Task Name"
-    ... You Data here
-});
- ```
- 
-In our sample project since we are using PRISM, we register our instance in Container and therefore make it more testable and meaningful.
+### Things to Remember!
+
+#### IMobileServiceClient
+
+IMobileServiceClient is the central context of our online and offline data management, It holds the list of queued CRUD operations which would sync it later by batch to the server.
 
  ```csharp
-containerRegistry.RegisterInstance(MobileServiceClient.Instance);
+public interface IMobileServiceClient
+ {
+     IMobileServiceCrudTable<T> GetSyncTable<T>() where T : ISynchronizable;
+     void DefineSyncTable<T>() where T : ISynchronizable;
+     Task SyncAllData();
+ }
  ```
 
-Then we are able to use it anywhere, in this case in our viewmodel.
+#### IMobileServiceCrudTable
  
+IMobileServiceCrudTable is the intermediary for both offline and online data syncronization, The generic class is ISynchronizable which is the same class we used on the BaseController of our webapi project, It is also versatile that you can call any custom webapi calls with "PostWebDataAsync" method, we are using SQLite-based implementation.
+
  ```csharp
- public class MainPageViewModel : ViewModelBase
-{
-    private readonly IMobileServiceClient _mobileServiceClient;
-	
-	public MainPageViewModel(IMobileServiceClient mobileServiceClient)
-	{
-		_mobileServiceClient = mobileServiceClient;
-	}
-	
-	public void InsertData(Todo Item)
-	{
-		var todoItemTable = _mobileServiceClient.GetSyncTable<TodoItem>();
-
-		//Inserts or Update a Data
-		todoItemTable.InsertOrUpdate(new TodoItem
-		{
-			Name = "Task Name"
-			... You Data here
-		});
-	}
-}
+ public interface IMobileServiceCrudTable<T> : IMobileServiceSyncTable
+ {
+     IList<T> ToList();
+     IList<T> ToList(string queryId);
+     void InsertOrUpdate(T data);
+     void Delete(T data);
+     Task PullAsync(string queryId, IMobileServiceTableQuery<T> paramQuery);
+     Task PullAsync(string queryId, string paramQuery);
+     IMobileServiceTableQuery<T> CreateQuery();
+     Task<ODataResult<T>> ExecuteQuery(string paramQuery);
+     Task<ODataResult<T>> ExecuteQuery(IMobileServiceTableQuery<T> paramQuery);
+     Task<TF> PostWebDataAsync<TF>(object obj, string methodName);
+     long RecordCount(string queryId);
+ }
  ```
+
  
- ### Beautiful!
+### Beautiful!
  
  To be continued....
 

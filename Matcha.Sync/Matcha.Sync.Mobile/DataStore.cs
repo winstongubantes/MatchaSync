@@ -27,6 +27,7 @@ namespace Matcha.Sync.Mobile
         private  SQLiteConnection _db;
         readonly object _dblock = new object();
         private JsonSerializerSettings _jsonSettings;
+        private static IDataStore _instance;
 
         static DataStore()
         {
@@ -35,10 +36,9 @@ namespace Matcha.Sync.Mobile
         
         private DataStore()
         { 
-
         }
 
-        public static IDataStore Instance { get; } = new DataStore();
+        public static IDataStore Instance { get; }  = _instance ?? (_instance = new DataStore());
 
 
         public IDataStore Init(string appId)

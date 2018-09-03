@@ -1,4 +1,5 @@
 ﻿using Matcha.Sync.Mobile;
+using Plugin.Connectivity;
 using Prism;
 using Prism.Ioc;
 using SampleMobile.ViewModels;
@@ -25,7 +26,11 @@ namespace SampleMobile
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            //Services
             containerRegistry.RegisterInstance(MobileServiceClient.Instance);
+            containerRegistry.RegisterInstance(CrossConnectivity.Current);
+
+            //Pages
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<MainPage>();
         }
