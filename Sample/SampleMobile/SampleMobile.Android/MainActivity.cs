@@ -4,6 +4,7 @@ using Android.OS;
 using Matcha.Sync.Mobile;
 using Prism;
 using Prism.Ioc;
+using SampleMobile.Constants;
 
 namespace SampleMobile.Droid
 {
@@ -15,7 +16,7 @@ namespace SampleMobile.Droid
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
-            MobileServiceClient.Init("http://192.168.1.6/SampleApi/odata");
+            MobileServiceClient.Init(AppConstant.ApiUrl);
 
             base.OnCreate(bundle);
 
