@@ -105,7 +105,10 @@ namespace SampleMobile.ViewModels
         private async Task SyncToServer()
         {
             IsBusy = true;
-            await _mobileServiceClient.SyncAllData();
+
+            if (_connectivity.IsConnected)
+                await _mobileServiceClient.SyncAllData();
+
             IsBusy = false;
         }
 
