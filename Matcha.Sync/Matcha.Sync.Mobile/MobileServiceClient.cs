@@ -116,7 +116,22 @@ namespace Matcha.Sync.Mobile
 
             public void InsertOrUpdate(T data)
             {
-                InsertOrUpdateByStatus(data);
+                var existingList = ToList();
+                var existingData = existingList.FirstOrDefault(e => e.LocalId == data.LocalId);
+
+                data.IsSynced = false; //new data must be flagged as NOT synced
+
+                if (existingData != null)
+                {
+                    //Since this is just a local data no need to check if it is "IsSynced"
+                    Update(data);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(data.LocalId)) data.LocalId = Guid.NewGuid().ToString();
+
+                existingList.Add(data);
+                DataStore.Instance.Add(typeof(T).Name, existingList, TimeSpan.FromDays(30));
             }
 
             public void Delete(T data)
@@ -162,9 +177,11 @@ namespace Matcha.Sync.Mobile
                     //Flag them when successful
                     foreach (var item in getAllNotSync)
                     {
-                        InsertOrUpdateByStatus(item, true);
+                        AggregateListByCondition(item, existingList);
                     }
-                }   
+                }
+
+                DataStore.Instance.Add(typeof(T).Name, existingList, TimeSpan.FromDays(30));
             }
 
             public async Task<ODataResult<T>> ExecuteQuery(string paramQuery)
@@ -215,26 +232,6 @@ namespace Matcha.Sync.Mobile
             #endregion
 
             #region Private Methods
-            private void InsertOrUpdateByStatus(T data, bool isSync = false)
-            {
-                var existingList = ToList();
-                var existingData = existingList.FirstOrDefault(e => e.LocalId == data.LocalId);
-
-                data.IsSynced = false; //new data must be flagged as NOT synced
-
-                if (existingData != null)
-                {
-                    //Since this is just a local data no need to check if it is "IsSynced"
-                    Update(data);
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(data.LocalId)) data.LocalId = Guid.NewGuid().ToString();
-
-                existingList.Add(data);
-                DataStore.Instance.Add(typeof(T).Name, existingList, TimeSpan.FromDays(30));
-            }
-
             private void Update(T data)
             {
                 var existingList = ToList();

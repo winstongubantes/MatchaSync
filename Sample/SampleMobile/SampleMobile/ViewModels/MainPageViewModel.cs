@@ -20,35 +20,54 @@ namespace SampleMobile.ViewModels
 {
     public class MainPageViewModel : ViewModelBase
     {
+        #region Fields
         private readonly IMobileServiceClient _mobileServiceClient;
         private readonly IDeviceService _deviceService;
         private readonly IMobileServiceCrudTable<TodoItem> _crudTodotTable;
         private readonly IConnectivity _connectivity;
         private readonly IPageDialogService _dialogService;
+        #endregion
 
+        #region Ctor
         public MainPageViewModel(
-            INavigationService navigationService, 
-            IMobileServiceClient mobileServiceClient, 
-            IDeviceService deviceService, 
-            IConnectivity connectivity, 
-            IPageDialogService dialogService) 
-            : base (navigationService)
+            INavigationService navigationService,
+            IMobileServiceClient mobileServiceClient,
+            IDeviceService deviceService,
+            IConnectivity connectivity,
+            IPageDialogService dialogService)
+            : base(navigationService)
         {
             _mobileServiceClient = mobileServiceClient;
             _deviceService = deviceService;
             _connectivity = connectivity;
             _dialogService = dialogService;
             _crudTodotTable = _mobileServiceClient.GetSyncTable<TodoItem>();
-        }
+        } 
+        #endregion
 
+        #region Commands
+        private ICommand _toggleCompleteCommand;
+        public ICommand ToggleCompleteCommand => _toggleCompleteCommand ?? (_toggleCompleteCommand = new DelegateCommand<TodoItem>(ToggleComplete));
+
+        private ICommand _syncCommand;
+        public ICommand SyncCommand => _syncCommand ?? (_syncCommand = new DelegateCommand(async () => await SyncToServer()));
+
+        private ICommand _addTaskCommand;
+        public ICommand AddTaskCommand => _addTaskCommand ?? (_addTaskCommand = new DelegateCommand(async () => await CreateNewTask()));
+
+        #endregion
+
+        #region Public Methods
         public override void OnNavigatedTo(NavigationParameters parameters)
         {
             _deviceService.BeginInvokeOnMainThread(async () =>
             {
                 await LoadTasks();
             });
-        }
+        } 
+        #endregion
 
+        #region Private Methods
         private async Task LoadTasks()
         {
             if (!_connectivity.IsConnected)
@@ -60,8 +79,8 @@ namespace SampleMobile.ViewModels
             IsBusy = true;
 
             var query = _crudTodotTable.CreateQuery();
-                //.Where(e => !e.IsComplete)
-                //.Take(20);
+            //.Where(e => !e.IsComplete)
+            //.Take(20);
 
             await _crudTodotTable.PullAsync("testquery", query);
             var data = _crudTodotTable.ToList("testquery");
@@ -69,15 +88,6 @@ namespace SampleMobile.ViewModels
 
             IsBusy = false;
         }
-
-        private ICommand _toggleCompleteCommand;
-        public ICommand ToggleCompleteCommand => _toggleCompleteCommand ?? (_toggleCompleteCommand = new DelegateCommand<TodoItem>(ToggleComplete));
-
-        private ICommand _syncCommand;
-        public ICommand SyncCommand => _syncCommand ?? (_syncCommand = new DelegateCommand(async () => await SyncToServer()));
-
-        private ICommand _addTaskCommand;
-        public ICommand AddTaskCommand => _addTaskCommand ?? (_addTaskCommand = new DelegateCommand(async ()=> await CreateNewTask()));
 
         private async Task CreateNewTask()
         {
@@ -98,7 +108,7 @@ namespace SampleMobile.ViewModels
                 IsBusy = false;
             }
 
-           
+
             await LoadTasks();
         }
 
@@ -106,8 +116,14 @@ namespace SampleMobile.ViewModels
         {
             IsBusy = true;
 
+            var notSynced = _crudTodotTable.ToList("testquery").Where(e=> !e.IsSynced);
+
             if (_connectivity.IsConnected)
+            {
                 await _mobileServiceClient.SyncAllData();
+            }
+
+            var notSynced2 = _crudTodotTable.ToList("testquery").Where(e => !e.IsSynced);
 
             //refresh locally
             var data = _crudTodotTable.ToList("testquery");
@@ -125,7 +141,9 @@ namespace SampleMobile.ViewModels
             var data = _crudTodotTable.ToList("testquery");
             TodoItems = new ObservableCollection<TodoItem>(data);
         }
+        #endregion
 
+        #region Properties
         private string _newTaskValue;
 
         public string NewTaskValue
@@ -140,6 +158,7 @@ namespace SampleMobile.ViewModels
         {
             get => _todoItems;
             set => SetProperty(ref _todoItems, value);
-        }
+        } 
+        #endregion
     }
 }

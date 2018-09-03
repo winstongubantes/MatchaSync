@@ -6,7 +6,7 @@
     <Authors>Winston Gubantes</Authors>
     <PackageProjectUrl>https://github.com/winstongubantes/matcha.sync</PackageProjectUrl>
     <Description>Sync Plugin For Xamarin</Description>
-    <Version>1.0.6</Version>
+    <Version>1.0.8</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
