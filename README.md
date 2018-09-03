@@ -2,7 +2,7 @@
 A plugin library for offline data sync, provides an SDK library for both Client & Server that makes it easy for developers to create apps that are functional without a network connection. But is also versatile that it can handle custom webapi calls (non-Odata webserver), The reason for creating a plugin for data synchronization it to provide developers other alternative which is FREE and customizable and drop dead simple. 
  
 ## Preview
- ![alt text](https://github.com/winstongubantes/matcha.validation/blob/master/Images/valid.gif "Sample In Action")
+ ![alt text](https://github.com/winstongubantes/matcha.sync/blob/master/Images/valid.gif "Sample In Action")
 
  
 ### Setup for WebApi
