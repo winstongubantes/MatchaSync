@@ -109,6 +109,10 @@ namespace SampleMobile.ViewModels
             if (_connectivity.IsConnected)
                 await _mobileServiceClient.SyncAllData();
 
+            //refresh locally
+            var data = _crudTodotTable.ToList("testquery");
+            TodoItems = new ObservableCollection<TodoItem>(data);
+
             IsBusy = false;
         }
 
