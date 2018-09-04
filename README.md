@@ -203,5 +203,31 @@ IMobileServiceCrudTable is the intermediary for both offline and online data syn
  
 ### Beautiful!
  
- To be continued....
+ How about calling custom methods on Odata Controller or WebApi Controller or a mixed of both, We have also supported it. look how simple it is.
 
+#### Calling Custom OData Function
+
+First , on your Asp.Net Core project you have to  declare it under Configure method on your IEdmModel,  you can follow the Microsoft's official [documentation](https://docs.microsoft.com/en-us/aspnet/web-api/overview/odata-support-in-aspnet-web-api/odata-v4/odata-actions-and-functions), You can also check our sample Asp.Net core project.
+
+Sample call:
+
+ ```csharp
+// we are calling ODataController's GetSalesTaxRate method
+var valueResult = await todoTable.PostWebDataAsync<Dictionary<string, string>>(null, $"GetSalesTaxRate(PostalCode={PostalCode})");
+ ResultValue = valueResult["value"];
+ ```
+
+#### Calling Custom WebApi Function
+
+Sample call:
+
+ ```csharp
+// we are calling Controller's GetSalesTaxRate method (with Custom route)
+var valueResult = await todoTable.PostWebDataAsync<string>(10, $"Custom/GetSalesTaxRate");
+ResultValue = valueResult;
+ ```
+
+
+### Awesome!
+ 
+Matcha sync allows users to interact with a mobile application, viewing, adding, or modifying data, even where there isn't a network connection. Changes are stored in a local database, and once the device is online, the changes can be synced.
