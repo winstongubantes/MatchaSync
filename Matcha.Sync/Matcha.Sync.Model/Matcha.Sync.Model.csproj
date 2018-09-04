@@ -5,8 +5,8 @@
     <Company>Matcha</Company>
     <Authors>Winston Gubantes</Authors>
     <PackageProjectUrl>https://github.com/winstongubantes/matcha.sync</PackageProjectUrl>
-    <Version>1.0.8</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.9</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

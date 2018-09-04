@@ -16,7 +16,7 @@ namespace SampleMobile.Droid
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
-            MobileServiceClient.Init(AppConstant.ApiUrl);
+            MobileServiceClient.Init(AppConstants.ApiUrl);
 
             base.OnCreate(bundle);
 

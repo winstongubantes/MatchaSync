@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.8</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>1.0.9</Version>
     <Authors>Winston Gubantes</Authors>
     <Company>Matcha</Company>
     <PackageProjectUrl>https://github.com/winstongubantes/matcha.sync</PackageProjectUrl>
