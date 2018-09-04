@@ -116,14 +116,10 @@ namespace SampleMobile.ViewModels
         {
             IsBusy = true;
 
-            var notSynced = _crudTodotTable.ToList("testquery").Where(e=> !e.IsSynced);
-
             if (_connectivity.IsConnected)
             {
                 await _mobileServiceClient.SyncAllData();
             }
-
-            var notSynced2 = _crudTodotTable.ToList("testquery").Where(e => !e.IsSynced);
 
             //refresh locally
             var data = _crudTodotTable.ToList("testquery");

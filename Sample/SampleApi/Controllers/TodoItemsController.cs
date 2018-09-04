@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Matcha.Sync.Api;
 using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Mvc;
 using SampleApi.Models;
 
@@ -67,6 +68,14 @@ namespace SampleApi.Controllers
 
             _db.TodoItems.Update(todo);
             await _db.SaveChangesAsync();
+        }
+
+        [HttpPost]
+        [ODataRoute("GetSalesTaxRate(PostalCode={postalCode})")]
+        public IActionResult GetSalesTaxRate([FromODataUri] int postalCode)
+        {
+            double rate = 5.6;  // Use a fake number for the sample.
+            return Ok(rate);
         }
     }
 }

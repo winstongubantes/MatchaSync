@@ -44,7 +44,7 @@ namespace SampleApi
 
             app.UseMvc(b =>
             {
-                b.MapODataServiceRoute("odata", "odata", GetEdmModel());
+                b.MapODataServiceRoute("api", "api", GetEdmModel());
 
                 //TODO: Add the supported query
                 b.Select()
@@ -59,6 +59,13 @@ namespace SampleApi
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
             builder.EntitySet<TodoItem>("TodoItems");
+
+            // New code:
+            builder.Function("GetSalesTaxRate")
+                .Returns<double>()
+                .Parameter<int>("PostalCode");
+
+
             return builder.GetEdmModel();
         }
     }
