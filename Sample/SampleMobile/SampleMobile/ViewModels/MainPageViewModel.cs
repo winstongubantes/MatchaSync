@@ -15,146 +15,44 @@ using Matcha.Sync.Mobile;
 using Plugin.Connectivity.Abstractions;
 using Prism.Services;
 using SampleMobile.Models;
+using SampleMobile.Views;
 
 namespace SampleMobile.ViewModels
 {
     public class MainPageViewModel : ViewModelBase
     {
-        #region Fields
-        private readonly IMobileServiceClient _mobileServiceClient;
-        private readonly IDeviceService _deviceService;
-        private readonly IMobileServiceCrudTable<TodoItem> _crudTodotTable;
-        private readonly IConnectivity _connectivity;
-        private readonly IPageDialogService _dialogService;
-        #endregion
+        private readonly INavigationService _navigationService;
 
-        #region Ctor
+
         public MainPageViewModel(
-            INavigationService navigationService,
-            IMobileServiceClient mobileServiceClient,
-            IDeviceService deviceService,
-            IConnectivity connectivity,
-            IPageDialogService dialogService)
+            INavigationService navigationService)
             : base(navigationService)
         {
-            _mobileServiceClient = mobileServiceClient;
-            _deviceService = deviceService;
-            _connectivity = connectivity;
-            _dialogService = dialogService;
-            _crudTodotTable = _mobileServiceClient.GetSyncTable<TodoItem>();
+            _navigationService = navigationService;
         } 
-        #endregion
 
-        #region Commands
-        private ICommand _toggleCompleteCommand;
-        public ICommand ToggleCompleteCommand => _toggleCompleteCommand ?? (_toggleCompleteCommand = new DelegateCommand<TodoItem>(ToggleComplete));
-
-        private ICommand _syncCommand;
-        public ICommand SyncCommand => _syncCommand ?? (_syncCommand = new DelegateCommand(async () => await SyncToServer()));
-
-        private ICommand _addTaskCommand;
-        public ICommand AddTaskCommand => _addTaskCommand ?? (_addTaskCommand = new DelegateCommand(async () => await CreateNewTask()));
-
-        #endregion
-
-        #region Public Methods
-        public override void OnNavigatedTo(NavigationParameters parameters)
+        private ICommand _showFullSyncSampleCommand;
+        public ICommand ShowFullSyncSampleCommand => _showFullSyncSampleCommand ?? (_showFullSyncSampleCommand = new DelegateCommand(() =>
         {
-            _deviceService.BeginInvokeOnMainThread(async () =>
-            {
-                await LoadTasks();
-            });
-        } 
-        #endregion
+            _navigationService.NavigateAsync(nameof(ODataQuerySyncPage));
+        }));
 
-        #region Private Methods
-        private async Task LoadTasks()
+        private ICommand _showStatusSyncSampleCommand;
+        public ICommand ShowStatusSyncSampleCommand => _showStatusSyncSampleCommand ?? (_showStatusSyncSampleCommand = new DelegateCommand(() =>
         {
-            if (!_connectivity.IsConnected)
-            {
-                await _dialogService.DisplayAlertAsync("", "No Internet!", "Ok");
-                return;
-            }
+            _navigationService.NavigateAsync(nameof(ODataQueryStatusPage));
+        }));
 
-            IsBusy = true;
-
-            var query = _crudTodotTable.CreateQuery();
-            //.Where(e => !e.IsComplete)
-            //.Take(20);
-
-            await _crudTodotTable.PullAsync("testquery", query);
-            var data = _crudTodotTable.ToList("testquery");
-            TodoItems = new ObservableCollection<TodoItem>(data);
-
-            IsBusy = false;
-        }
-
-        private async Task CreateNewTask()
+        private ICommand _showODataCallCommand;
+        public ICommand ShowODataCallCommand => _showODataCallCommand ?? (_showODataCallCommand = new DelegateCommand(() =>
         {
-            var lastData = TodoItems.LastOrDefault();
+            _navigationService.NavigateAsync(nameof(ODataFunctionPage));
+        }));
 
-            if (_connectivity.IsConnected && !string.IsNullOrWhiteSpace(NewTaskValue))
-            {
-                _crudTodotTable.InsertOrUpdate(new TodoItem
-                {
-                    Id = (lastData?.Id ?? 0) + 1,
-                    Name = NewTaskValue,
-                    LastUpdated = DateTime.Now
-                });
-
-                NewTaskValue = string.Empty;
-                IsBusy = true;
-                await _crudTodotTable.PushAsync();
-                IsBusy = false;
-            }
-
-
-            await LoadTasks();
-        }
-
-        private async Task SyncToServer()
+        private ICommand _showWebApiCallCommand;
+        public ICommand ShowWebApiCallCommand => _showWebApiCallCommand ?? (_showWebApiCallCommand = new DelegateCommand(() =>
         {
-            IsBusy = true;
-
-            if (_connectivity.IsConnected)
-            {
-                await _mobileServiceClient.SyncAllData();
-            }
-
-            //refresh locally
-            var data = _crudTodotTable.ToList("testquery");
-            TodoItems = new ObservableCollection<TodoItem>(data);
-
-            IsBusy = false;
-        }
-
-        private void ToggleComplete(TodoItem item)
-        {
-            item.IsComplete = !item.IsComplete;
-            _crudTodotTable.InsertOrUpdate(item);
-
-            //refresh locally
-            var data = _crudTodotTable.ToList("testquery");
-            TodoItems = new ObservableCollection<TodoItem>(data);
-        }
-        #endregion
-
-        #region Properties
-        private string _newTaskValue;
-
-        public string NewTaskValue
-        {
-            get => _newTaskValue;
-            set => SetProperty(ref _newTaskValue, value);
-        }
-
-        private ObservableCollection<TodoItem> _todoItems;
-
-        public ObservableCollection<TodoItem> TodoItems
-        {
-            get => _todoItems;
-            set => SetProperty(ref _todoItems, value);
-        } 
-        #endregion
+            _navigationService.NavigateAsync(nameof(WebApiMethodPage));
+        }));
     }
 }

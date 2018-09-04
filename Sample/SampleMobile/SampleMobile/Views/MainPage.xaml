@@ -4,58 +4,12 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:SampleMobile.Converters;assembly=SampleMobile"
-    Title="Todo List">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:BooleanToObjectConverter
-                x:Key="BooleanToObjectConverter"
-                x:TypeArguments="x:String"
-                FalseObject="Not Completed"
-                TrueObject="Completed" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding SyncCommand}" Text="Sync" />
-    </ContentPage.ToolbarItems>
-    <Grid>
-        <StackLayout Padding="24">
-            <ListView x:Name="TodoListView" ItemsSource="{Binding TodoItems}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid Padding="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Label Text="Task Name: " />
-                                <Label Grid.Column="1" Text="{Binding Name}" />
-                                <!--<Switch Grid.Column="2" IsToggled="{Binding IsComplete}" />-->
-                                <Label
-                                    Grid.Column="2"
-                                    Text="{Binding IsComplete, Converter={StaticResource BooleanToObjectConverter}}"
-                                    TextColor="DarkBlue">
-                                    <Label.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ToggleCompleteCommand, Source={x:Reference TodoListView}}" CommandParameter="{Binding}" />
-                                    </Label.GestureRecognizers>
-                                </Label>
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <StackLayout>
-                <Entry Placeholder="Add New Task" Text="{Binding NewTaskValue}" />
-                <Button Command="{Binding AddTaskCommand}" Text="Add New Task" />
-            </StackLayout>
-        </StackLayout>
+    Title="Mobile Sync Samples">
 
-        <ActivityIndicator
-            HorizontalOptions="Center"
-            IsRunning="{Binding IsBusy}"
-            IsVisible="{Binding IsBusy}"
-            VerticalOptions="Center" />
-    </Grid>
-
+    <StackLayout Padding="24" VerticalOptions="Center">
+        <Button Command="{Binding ShowFullSyncSampleCommand}" Text="Todo List Example" />
+        <Button Command="{Binding ShowStatusSyncSampleCommand}" Text="Todo List (status: complete)" />
+        <Button Command="{Binding ShowODataCallCommand}" Text="OData Function Call" />
+        <Button Command="{Binding ShowWebApiCallCommand}" Text="WebApi Method Call" />
+    </StackLayout>
 </ContentPage>
