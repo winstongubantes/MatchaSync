@@ -284,7 +284,7 @@ namespace Matcha.Sync.Mobile
             {
                 var existingData = existingList.FirstOrDefault(e => e.LocalId == resultVal.LocalId);
 
-                resultVal.IsSynced = true; //new data must be flagged as NOT synced
+                resultVal.IsSynced = true; //new data must be flagged as synced
 
                 //Do Not UPDATE data that has changes(IsSynced == false)
                 if (existingData == null)

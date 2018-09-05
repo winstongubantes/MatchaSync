@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Matcha.Sync.Mobile" Version="1.0.9" />
+    <PackageReference Include="Matcha.Sync.Mobile" Version="1.1.1001" />
     <PackageReference Include="Xam.Plugin.Connectivity" Version="3.2.0" />
     <PackageReference Include="Xamarin.Forms" Version="2.5.0.122203" />
     <PackageReference Include="Prism.DryIoc.Forms" Version="7.0.0.396" />
