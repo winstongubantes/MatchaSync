@@ -23,7 +23,7 @@ namespace SampleMobile.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            MobileServiceClient.Init(AppConstant.ApiUrl);
+            MobileServiceClient.Init(AppConstants.ApiUrl);
 
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App(new iOSInitializer()));
