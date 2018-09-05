@@ -136,7 +136,7 @@ namespace Matcha.Sync.Mobile
 
             public void Delete(T data)
             {
-                data.IsDeleted = false;
+                data.IsDeleted = true;
                 data.IsSynced = false;
                 Update(data);
             }
@@ -425,9 +425,9 @@ namespace Matcha.Sync.Mobile
 
             private string ParamPreFix => string.IsNullOrWhiteSpace(QueryRaw) ? "?" : "&";
 
-            private string WhereAndPreFix => string.IsNullOrWhiteSpace(_whereQuery.ToString()) ? $"{ParamPreFix}$filter=" : " and ";
+            private string WhereAndPreFix => string.IsNullOrWhiteSpace(_whereQuery.ToString()) ? "?$filter=" : " and ";
 
-            private string QueryRaw => $"{_skipQuery}{_takeQuery}{_orderQuery}{_whereQuery}";
+            private string QueryRaw => $"{_whereQuery}{_skipQuery}{_takeQuery}{_orderQuery}";
 
             private string CountPostFix => string.IsNullOrWhiteSpace(QueryRaw) ? "?$count=true" : "&$count=true";
         }

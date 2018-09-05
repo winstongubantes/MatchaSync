@@ -111,7 +111,7 @@ namespace Matcha.Sync.Mobile
         {
             lock (_dblock)
             {
-                var entries = _db.Query<SchemaContent>($"SELECT * FROM Banana WHERE ExpirationDate < ?", DateTime.UtcNow.Ticks);
+                var entries = _db.Query<SchemaContent>($"SELECT * FROM {nameof(SchemaContent)} WHERE ExpirationDate < ?", DateTime.UtcNow.Ticks);
                 _db.RunInTransaction(() =>
                 {
                     foreach (var k in entries)
