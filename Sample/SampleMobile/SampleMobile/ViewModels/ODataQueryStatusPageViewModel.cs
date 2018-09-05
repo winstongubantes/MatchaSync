@@ -42,9 +42,6 @@ namespace SampleMobile.ViewModels
         #endregion
 
         #region Commands
-        private ICommand _toggleCompleteCommand;
-        public ICommand ToggleCompleteCommand => _toggleCompleteCommand ?? (_toggleCompleteCommand = new DelegateCommand<TodoItem>(ToggleComplete));
-
         private ICommand _syncCommand;
         public ICommand SyncCommand => _syncCommand ?? (_syncCommand = new DelegateCommand(async () => await SyncToServer()));
         #endregion
@@ -77,7 +74,7 @@ namespace SampleMobile.ViewModels
             try
             {
                 await _crudTodotTable.PullAsync("testquerycomplete", query);
-                var data = _crudTodotTable.ToList("testquerycomplete").Where(e => e.IsComplete);
+                var data = _crudTodotTable.ToList("testquerycomplete");
                 TodoItems = new ObservableCollection<TodoItem>(data);
             }
             catch (Exception ex)
@@ -93,6 +90,9 @@ namespace SampleMobile.ViewModels
         {
             IsBusy = true;
 
+            //this is done due to , no trigger bound for changing status
+            UpdateUnsyncData();
+
             if (_connectivity.IsConnected)
             {
                 try
@@ -106,21 +106,22 @@ namespace SampleMobile.ViewModels
             }
 
             //refresh locally
-            var data = _crudTodotTable.ToList("testquerycomplete").Where(e => e.IsComplete);
+            var data = _crudTodotTable.ToList("testquerycomplete");
             TodoItems = new ObservableCollection<TodoItem>(data);
 
             IsBusy = false;
         }
 
-        private void ToggleComplete(TodoItem item)
+        private void UpdateUnsyncData()
         {
-            item.IsComplete = !item.IsComplete;
-            _crudTodotTable.InsertOrUpdate(item);
+            var unSyncList = TodoItems.Where(e => !e.IsSynced);
 
-            //refresh locally
-            var data = _crudTodotTable.ToList("testquerycomplete").Where(e=> e.IsComplete);
-            TodoItems = new ObservableCollection<TodoItem>(data);
+            foreach (var todoItem in unSyncList)
+            {
+                _crudTodotTable.InsertOrUpdate(todoItem);
+            }
         }
+
         #endregion
 
         #region Properties
