@@ -5,7 +5,7 @@
 * `PM> Install-Package Matcha.Sync.Mobile`
 * Install into ALL of your projects, include client projects.
 
-#### For Android
+### For Android
  
 You call the init after all libraries initialization in MainActivity class.
  
@@ -24,7 +24,7 @@ public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompa
  
  ```
 
-#### For iOS
+### For iOS
  
 You call the init after all libraries initialization in FinishedLaunching method in FormsApplicationDelegate class.
  
@@ -49,7 +49,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
 * `PM> Install-Package Matcha.Sync.Api`
 * Install to your  asp.net core project
 
-#### Create TodoItem model and Inherit Synchronizable
+### Create TodoItem model and Inherit Synchronizable
 
  ```csharp
  public class TodoItem : Synchronizable
@@ -59,7 +59,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
  }
  ```
 
-#### Create Controller and Inherit BaseController
+### Create Controller and Inherit BaseController
 
 BaseController is based on ODataController from Microsoft.AspNetCore.OData nuget library, It holds a generic parameter which is of type ISynchronizable in our case it is TodoItem.
 
@@ -87,7 +87,7 @@ public class TodoItemsController : BaseController<TodoItem>
  
  ```
 
-#### Setup OData supported queries
+### Setup OData supported queries
 We will not gonna cover it all here since this is very broad topic, I will just gonna link you here to get you started with OData Asp.Net Core [LINK HERE](https://blogs.msdn.microsoft.com/odatateam/2018/07/03/asp-net-core-odata-now-available/)
 
 You can take a look at our sample Asp.Net Core project for more reference [LINK HERE](https://github.com/winstongubantes/matchasync/tree/master/Sample/SampleApi)
