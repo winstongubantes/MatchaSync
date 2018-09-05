@@ -190,7 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Matcha.Sync.Mobile">
-      <Version>1.0.9</Version>
+      <Version>1.1.1001</Version>
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.4.118</Version>

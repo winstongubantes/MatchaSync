@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleMobile.iOS", "..\Samp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{76BEC563-FA46-4153-ADAC-3CCED2D29483}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matcha.Sync.Mobile.Tests", "..\UnitTests\Matcha.Sync.Mobile.Tests\Matcha.Sync.Mobile.Tests.csproj", "{BAE1142C-743F-4B75-98A1-7B48837A9C62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matcha.Sync.Mobile.Tests", "..\UnitTests\Matcha.Sync.Mobile.Tests\Matcha.Sync.Mobile.Tests.csproj", "{BAE1142C-743F-4B75-98A1-7B48837A9C62}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
