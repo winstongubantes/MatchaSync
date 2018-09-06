@@ -12,8 +12,8 @@ var todoTable = client.GetSyncTable<TodoItem>();
 
 
 var query = _crudTodotTable.CreateQuery()
-                                .Skip(Page)
-                                .Take((int)NumberPages);
+                                .Skip(((Page - 1) * RecordPerPage))
+                                .Take(RecordPerPage);
 
 await _crudTodotTable.PullAsync("getinfoquery", query);
 var data = _crudTodotTable.ToList("getinfoquery");

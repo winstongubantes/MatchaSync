@@ -69,7 +69,7 @@ namespace SampleMobile.ViewModels
             IsBusy = true;
 
             var query = _crudTodotTable.CreateQuery()
-                                .Skip((Page - 1) * RecordPerPage)
+                                .Skip(((Page - 1) * RecordPerPage))
                                 .Take(RecordPerPage);
 
             try
