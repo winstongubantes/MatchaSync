@@ -4,9 +4,10 @@ A plugin library for offline data sync, provides an SDK library for both Client 
 ## Preview
 
 NuGet: [Matcha.Sync.Api](http://www.nuget.org/packages/Matcha.Sync.Api) [![NuGet](https://img.shields.io/nuget/v/Matcha.Sync.Api.svg?label=NuGet)](https://www.nuget.org/packages/Matcha.Sync.Mobile/)
+
 NuGet: [Matcha.Sync.Mobile](http://www.nuget.org/packages/Matcha.Sync.Mobile) [![NuGet](https://img.shields.io/nuget/v/Matcha.Sync.Mobile.svg?label=NuGet)](https://www.nuget.org/packages/Matcha.Sync.Mobile/)
 
- <img src="https://github.com/winstongubantes/matcha.sync/blob/master/Images/valid.gif" width="600" title="md">
+<img src="https://github.com/winstongubantes/matcha.sync/blob/master/Images/valid.gif" width="600" title="md">
 
 ### Simple as 1 - 2 - 3
 #### Step 1
