@@ -190,7 +190,7 @@ var data = client.ToList("testquerycomplete");
 //create a query
 var query = _crudTodotTable.CreateQuery()
 				.Where(e=> e.Name.StartsWith("Task"))
-				.Where(e=> e.Name.Contains("Task"))
+				.Where(e=> e.Name.Contains("Task") || e.Name.Contains("a"))
 				.Where(e=> e.IsComplete);
  ```
 
@@ -198,7 +198,7 @@ var query = _crudTodotTable.CreateQuery()
 ```csharp
 //create a query
 var query = _crudTodotTable.CreateQuery()
-				.Where(e=> e.Name.StartsWith("Task"))
+				.Where(e=> e.Name.StartsWith("Task") || e.Name.Contains("T"))
 				.Where(e=> e.Name.Contains("Task"))
 				.Where(e=> e.IsComplete)
 				.Take(20)
