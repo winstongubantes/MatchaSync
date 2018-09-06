@@ -99,7 +99,7 @@ namespace SampleMobile.ViewModels
             {
                 try
                 {
-                    await _mobileServiceClient.SyncAllData();
+                    //await _mobileServiceClient.SyncAllData();
                     await LoadTasks();
                 }
                 catch (Exception ex)
