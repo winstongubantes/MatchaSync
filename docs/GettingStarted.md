@@ -1,7 +1,7 @@
 # Getting Started
 
 ## Setup Mobile
-* NuGet: [Matcha.Sync.Mobile](http://www.nuget.org/packages/Matcha.Sync.Mobile) [![NuGet](https://img.shields.io/nuget/v/Matcha.Sync.Mobile.svg?label=NuGet)](https://www.nuget.org/packages/Xam.Plugins.Settings/)
+* NuGet: [Matcha.Sync.Mobile](http://www.nuget.org/packages/Matcha.Sync.Mobile) [![NuGet](https://img.shields.io/nuget/v/Matcha.Sync.Mobile.svg?label=NuGet)](https://www.nuget.org/packages/Matcha.Sync.Mobile/)
 * `PM> Install-Package Matcha.Sync.Mobile`
 * Install into ALL of your projects, include client projects.
 

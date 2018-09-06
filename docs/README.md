@@ -8,3 +8,4 @@ A Complete documentation in using the Matcha Sync Plugin for Xamarin and Windows
 * [Sync Your Changes](PushAndPullSync.md)
 * [Queries](Query.md)
 * [Pagination How to](Pagination.md)
+* [Custom Web Functions](Pagination.md)
