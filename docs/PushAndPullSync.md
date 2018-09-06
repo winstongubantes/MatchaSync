@@ -1,6 +1,6 @@
-# Sync Your Changes
+# Sync Your Changes (OData)
 
-IMobileServiceCrudTable the one who manage the operations, He also acts as the intermediary between your api and your local data, There are two methods to push the changes you have made and pull the newest data.
+IMobileServiceCrudTable the one who manage the operations, He also acts as the intermediary between your api and your local data, There are two methods to push the changes you have made and pull the newest data, We only support OData v4 endpoints.
 
 ## PullAsync
 
@@ -14,11 +14,11 @@ var client = MobileServiceClient.Instance;
 var todoTable = client.GetSyncTable<TodoItem>();
 
 //create a query
-var query = _crudTodotTable.CreateQuery()
+var query = todoTable.CreateQuery()
                             .Where(e=> e.IsComplete);
 
-await client.PullAsync("testquerycomplete", query);
-var data = client.ToList("testquerycomplete");
+await todoTable.PullAsync("testquerycomplete", query);
+var data = todoTable.ToList("testquerycomplete");
  ```
  
 Note: you can compose a complex query in CreateQuery method which is similar to IQueryable but only limited methods. To know more about CreateQuery please check the [LINK HERE](Query.md)
@@ -41,7 +41,7 @@ var item = TodoItems.FirstOrDefault(e => e.Id == 1);
 
 todoTable.Delete(item );
 
-await _crudTodotTable.PushAsync();
+await todoTable.PushAsync();
  ```
 
 Please take a look at the sample project for reference or you can check the UnitTest Project it contains integration test for syncing data

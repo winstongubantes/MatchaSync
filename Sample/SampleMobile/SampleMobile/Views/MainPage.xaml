@@ -7,9 +7,11 @@
     Title="Mobile Sync Samples">
 
     <StackLayout Padding="24" VerticalOptions="Center">
-        <Button Command="{Binding ShowFullSyncSampleCommand}" Text="Todo List Example" />
-        <Button Command="{Binding ShowStatusSyncSampleCommand}" Text="Todo List (status: complete)" />
+        <Button Command="{Binding ShowFullSyncSampleCommand}" Text="Todo List (OData)" />
+        <Button Command="{Binding ShowStatusSyncSampleCommand}" Text="Todo-Complete (OData)" />
+        <Button Command="{Binding ShowFullSyncWebApiSampleCommand}" Text="Todo List (WebApi)" />
         <Button Command="{Binding ShowODataCallCommand}" Text="OData Function Call" />
         <Button Command="{Binding ShowWebApiCallCommand}" Text="WebApi Method Call" />
+        <Button Command="{Binding ShowPaginationPageCommand}" Text="Pagination" />
     </StackLayout>
 </ContentPage>

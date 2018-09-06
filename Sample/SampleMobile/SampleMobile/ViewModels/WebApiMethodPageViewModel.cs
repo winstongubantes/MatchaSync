@@ -33,7 +33,7 @@ namespace SampleMobile.ViewModels
 	    {
 	        try
 	        {
-	            var valueResult = await _crudTodotTable.PostWebDataAsync<string>(10, $"Custom/GetSalesTaxRate");
+	            var valueResult = await _crudTodotTable.PostWebDataAsync<string>(10, $"CustomItems/GetSalesTaxRate");
 	            ResultValue = valueResult;
 	        }
 	        catch (Exception e)

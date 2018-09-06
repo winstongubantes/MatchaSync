@@ -37,6 +37,8 @@ namespace SampleMobile
             containerRegistry.RegisterForNavigation<ODataQueryStatusPage>();
             containerRegistry.RegisterForNavigation<ODataFunctionPage>();
             containerRegistry.RegisterForNavigation<WebApiMethodPage>();
+            containerRegistry.RegisterForNavigation<WebApiSyncPage>();
+            containerRegistry.RegisterForNavigation<PaginationPage>();
         }
     }
 }

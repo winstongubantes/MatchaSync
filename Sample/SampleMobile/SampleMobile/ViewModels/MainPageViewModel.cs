@@ -37,6 +37,12 @@ namespace SampleMobile.ViewModels
             _navigationService.NavigateAsync(nameof(ODataQuerySyncPage));
         }));
 
+        private ICommand _showFullSyncWebApiSampleCommand;
+        public ICommand ShowFullSyncWebApiSampleCommand => _showFullSyncWebApiSampleCommand ?? (_showFullSyncWebApiSampleCommand = new DelegateCommand(() =>
+        {
+            _navigationService.NavigateAsync(nameof(WebApiSyncPage));
+        }));
+
         private ICommand _showStatusSyncSampleCommand;
         public ICommand ShowStatusSyncSampleCommand => _showStatusSyncSampleCommand ?? (_showStatusSyncSampleCommand = new DelegateCommand(() =>
         {
@@ -53,6 +59,12 @@ namespace SampleMobile.ViewModels
         public ICommand ShowWebApiCallCommand => _showWebApiCallCommand ?? (_showWebApiCallCommand = new DelegateCommand(() =>
         {
             _navigationService.NavigateAsync(nameof(WebApiMethodPage));
+        }));
+
+        private ICommand _showPaginationPageCommand;
+        public ICommand ShowPaginationPageCommand => _showPaginationPageCommand ?? (_showPaginationPageCommand = new DelegateCommand(() =>
+        {
+            _navigationService.NavigateAsync(nameof(PaginationPage));
         }));
     }
 }

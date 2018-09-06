@@ -1,6 +1,6 @@
 # Queries
 
-IMobileServiceCrudTable has CreateQuery method which will create an instance of IMobileServiceTableQuery<T\>  which is quite similar to IQueryable.
+IMobileServiceCrudTable has CreateQuery method which will create an instance of IMobileServiceTableQuery<T\>  which is quite similar to IQueryable. Query only supports OData v4.0 endpoints.
 
 ## Take
 
