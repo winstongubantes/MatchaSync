@@ -44,6 +44,6 @@ todoTable.Delete(item );
 await _crudTodotTable.PushAsync();
  ```
 
-Please take a look at the sample project for reference or you can check the UnitTest Project it contains integration test for syncing data,
+Please take a look at the sample project for reference or you can check the UnitTest Project it contains integration test for syncing data
 
 <= Back to [Table of Contents](README.md)
