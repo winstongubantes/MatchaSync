@@ -69,7 +69,7 @@ namespace SampleMobile.ViewModels
             IsBusy = true;
 
             var query = _crudTodotTable.CreateQuery()
-                                .Skip(Page)
+                                .Skip((Page - 1) * RecordPerPage)
                                 .Take(RecordPerPage);
 
             try
@@ -84,7 +84,7 @@ namespace SampleMobile.ViewModels
             }
             catch (Exception ex)
             {
-                await _dialogService.DisplayAlertAsync("", "No Internet!", "Ok");
+                await _dialogService.DisplayAlertAsync("", ex.Message, "Ok");
             }
 
 
