@@ -1,11 +1,12 @@
 # Matcha Sync Plugin for Xamarin.Forms
 A plugin library for offline data sync, provides an SDK library for both Client & Server that makes it easy for developers to create apps that are functional without a network connection. But is also versatile that it can handle custom webapi calls (non-Odata webserver), The reason for creating a plugin for data synchronization it to provide developers other alternative which is FREE and customizable and drop dead simple. 
  
+## Nuget
+[Matcha.Sync.Api](http://www.nuget.org/packages/Matcha.Sync.Api) [![NuGet](https://img.shields.io/nuget/v/Matcha.Sync.Api.svg?label=NuGet)](https://www.nuget.org/packages/Matcha.Sync.Api/)
+
+[Matcha.Sync.Mobile](http://www.nuget.org/packages/Matcha.Sync.Mobile) [![NuGet](https://img.shields.io/nuget/v/Matcha.Sync.Mobile.svg?label=NuGet)](https://www.nuget.org/packages/Matcha.Sync.Mobile/)
+ 
 ## Preview
-
-NuGet: [Matcha.Sync.Api](http://www.nuget.org/packages/Matcha.Sync.Api) [![NuGet](https://img.shields.io/nuget/v/Matcha.Sync.Api.svg?label=NuGet)](https://www.nuget.org/packages/Matcha.Sync.Mobile/)
-
-NuGet: [Matcha.Sync.Mobile](http://www.nuget.org/packages/Matcha.Sync.Mobile) [![NuGet](https://img.shields.io/nuget/v/Matcha.Sync.Mobile.svg?label=NuGet)](https://www.nuget.org/packages/Matcha.Sync.Mobile/)
 
 <img src="https://github.com/winstongubantes/matcha.sync/blob/master/Images/valid.gif" width="600" title="md">
 
