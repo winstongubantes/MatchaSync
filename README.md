@@ -18,12 +18,12 @@ Know more about data synchronization from your mobile client to server, Utilize 
 ### Pagination
 Know more about how Matcha Sync could simplify your paging process and let you concentrate in your apps business-logic. [Get started here](https://winstongubantes.github.io/matchasync/Pagination.html)
 
-<img src="https://github.com/winstongubantes/matcha.sync/blob/master/Images/pagination.gif" width="400" title="md">
+<img src="https://github.com/winstongubantes/matcha.sync/blob/master/Images/pagination.gif" width="210" title="md">
 
 ### Infinite Scroll
 Know more about how easy it is to implement infinite scrolling in your app [Get started here](https://winstongubantes.github.io/matchasync/InfiniteScroll.html)
 
-<img src="https://github.com/winstongubantes/matcha.sync/blob/master/Images/infinite.gif" width="400" title="md">
+<img src="https://github.com/winstongubantes/matcha.sync/blob/master/Images/infinite.gif" width="210" title="md">
 
 ### Awesome!
  
