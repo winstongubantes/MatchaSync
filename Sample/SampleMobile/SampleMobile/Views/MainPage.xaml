@@ -13,5 +13,6 @@
         <Button Command="{Binding ShowODataCallCommand}" Text="OData Function Call" />
         <Button Command="{Binding ShowWebApiCallCommand}" Text="WebApi Method Call" />
         <Button Command="{Binding ShowPaginationPageCommand}" Text="Pagination" />
+        <Button Command="{Binding ShowInfiniteScrollPageCommand}" Text="Infinite Scroll" />
     </StackLayout>
 </ContentPage>

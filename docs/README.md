@@ -9,4 +9,5 @@ A Complete documentation in using the Matcha Sync Plugin for Xamarin and Windows
 * [Sync Your Changes (WebApi)](PushAndPullSyncWebapi.md)
 * [Queries](Query.md)
 * [Pagination How to](Pagination.md)
+* [Infinite Scroll How to](InfiniteScroll.md)
 * [Custom Web Functions](CustomFunctions.md)

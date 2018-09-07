@@ -39,6 +39,7 @@ namespace SampleMobile
             containerRegistry.RegisterForNavigation<WebApiMethodPage>();
             containerRegistry.RegisterForNavigation<WebApiSyncPage>();
             containerRegistry.RegisterForNavigation<PaginationPage>();
+            containerRegistry.RegisterForNavigation<InfiniteScrollPage>();
         }
     }
 }

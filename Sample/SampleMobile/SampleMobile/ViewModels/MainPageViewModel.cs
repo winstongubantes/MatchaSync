@@ -66,5 +66,11 @@ namespace SampleMobile.ViewModels
         {
             _navigationService.NavigateAsync(nameof(PaginationPage));
         }));
+
+        private ICommand _showInfiniteScrollPageCommand;
+        public ICommand ShowInfiniteScrollPageCommand => _showInfiniteScrollPageCommand ?? (_showInfiniteScrollPageCommand = new DelegateCommand(() =>
+        {
+            _navigationService.NavigateAsync(nameof(InfiniteScrollPage));
+        }));
     }
 }
