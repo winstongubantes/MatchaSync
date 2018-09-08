@@ -87,6 +87,23 @@ public class TodoItemsController : BaseController<TodoItem>
  
  ```
 
+## Setup OData Configure method
+ ```csharp
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+ {
+     if (env.IsDevelopment())
+     {
+         app.UseDeveloperExceptionPage();
+     }
+
+     app.UseMvc(b =>
+     {
+         //call MapODataServiceRouteBase
+         b.MapODataServiceRouteBase("api", "api");
+     });
+ }
+ ```
+
 ## Setup OData supported queries
 We will not gonna cover it all here since this is very broad topic, I will just gonna link you here to get you started with OData Asp.Net Core [LINK HERE](https://blogs.msdn.microsoft.com/odatateam/2018/07/03/asp-net-core-odata-now-available/)
 
