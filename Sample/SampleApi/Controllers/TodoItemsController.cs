@@ -70,12 +70,12 @@ namespace SampleApi.Controllers
             await _db.SaveChangesAsync();
         }
 
-        [HttpPost]
-        [ODataRoute("GetSalesTaxRate(PostalCode={postalCode})")]
-        public IActionResult GetSalesTaxRate([FromODataUri] int postalCode)
-        {
-            double rate = 5.6;  // Use a fake number for the sample.
-            return Ok(rate);
-        }
+        //[HttpPost]
+        //[ODataRoute("GetSalesTaxRate(PostalCode={postalCode})")]
+        //public IActionResult GetSalesTaxRate([FromODataUri] int postalCode)
+        //{
+        //    double rate = 5.6;  // Use a fake number for the sample.
+        //    return Ok(rate);
+        //}
     }
 }

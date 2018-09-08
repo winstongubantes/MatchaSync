@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.1.1001</Version>
+    <Version>1.1.1003</Version>
     <Authors>Winston Gubantes</Authors>
     <Company>Matcha</Company>
     <PackageProjectUrl>https://github.com/winstongubantes/matcha.sync</PackageProjectUrl>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Matcha.Sync.Api;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -44,29 +45,23 @@ namespace SampleApi
 
             app.UseMvc(b =>
             {
-                b.MapODataServiceRoute("api", "api", GetEdmModel());
-
-                //TODO: Add the supported query
-                b.Select()
-                    .MaxTop(100)
-                    .OrderBy()
-                    .Filter()
-                    .Count();
+                //TODO: add action for OData ModelBuilder
+                b.MapODataServiceRouteBase("api", "api");
             });
         }
 
-        private static IEdmModel GetEdmModel()
-        {
-            ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-            builder.EntitySet<TodoItem>("TodoItems");
+        //private static IEdmModel GetEdmModel()
+        //{
+        //    ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
+        //    builder.EntitySet<TodoItem>("TodoItems");
 
-            // New code:
-            builder.Function("GetSalesTaxRate")
-                .Returns<double>()
-                .Parameter<int>("PostalCode");
+        //    // New code:
+        //    builder.Function("GetSalesTaxRate")
+        //        .Returns<double>()
+        //        .Parameter<int>("PostalCode");
 
 
-            return builder.GetEdmModel();
-        }
+        //    return builder.GetEdmModel();
+        //}
     }
 }
