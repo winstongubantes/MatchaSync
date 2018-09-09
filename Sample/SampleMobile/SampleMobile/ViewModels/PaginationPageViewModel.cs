@@ -3,6 +3,7 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -42,8 +43,22 @@ namespace SampleMobile.ViewModels
         #endregion
 
         #region Commands
-        private ICommand _getinfoCommand;
-        public ICommand GetInfoCommand => _getinfoCommand ?? (_getinfoCommand = new DelegateCommand(async () => await GetInfo()));
+	    private ICommand _prevCommand;
+	    public ICommand PrevCommand => _prevCommand ?? (_prevCommand = new DelegateCommand(async () =>
+	    {
+            if(Page <= 0) return;
+	        Page--;
+            await LoadTasks();
+	    }));
+
+
+	    private ICommand _nextCommand;
+	    public ICommand NextCommand => _nextCommand ?? (_nextCommand = new DelegateCommand(async () =>
+	    {
+	        if (Page >= NumberPages) return;
+	        Page++;
+	        await LoadTasks();
+        }));
 
         #endregion
 
@@ -74,43 +89,20 @@ namespace SampleMobile.ViewModels
 
             try
             {
-                await _crudTodotTable.PullAsync("getinfoquery", query);
-                var data = _crudTodotTable.ToList("getinfoquery");
-                var recordNumber = _crudTodotTable.RecordCount("getinfoquery");
-
-                NumberPages = (int) Math.Ceiling((double)recordNumber / RecordPerPage);
-
-                TodoItems = new ObservableCollection<TodoItem>(data);
+                await _crudTodotTable.PullAsync($"getinfoquery{Page}", query);
             }
             catch (Exception ex)
             {
-                await _dialogService.DisplayAlertAsync("", ex.Message, "Ok");
+                Debug.WriteLine(ex.Message);
             }
 
+            var data = _crudTodotTable.ToList($"getinfoquery{Page}");
+            var recordNumber = _crudTodotTable.RecordCount($"getinfoquery{Page}");
 
-            IsBusy = false;
-        }
+            NumberPages = (int)Math.Ceiling((double)recordNumber / RecordPerPage);
 
-        private async Task GetInfo()
-        {
-            IsBusy = true;
-
-            if (_connectivity.IsConnected)
-            {
-                try
-                {
-                    //await _mobileServiceClient.SyncAllData();
-                    await LoadTasks();
-                }
-                catch (Exception ex)
-                {
-                    await _dialogService.DisplayAlertAsync("", "No Internet!", "Ok");
-                }
-            }
-
-            //refresh locally
-            var data = _crudTodotTable.ToList("getinfoquery");
             TodoItems = new ObservableCollection<TodoItem>(data);
+
 
             IsBusy = false;
         }

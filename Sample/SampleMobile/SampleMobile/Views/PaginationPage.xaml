@@ -6,38 +6,56 @@
     xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
     Title="Pagination"
     prism:ViewModelLocator.AutowireViewModel="True">
-    <ContentPage.ToolbarItems>
+    <!--<ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding GetInfoCommand}" Text="Get Info" />
-    </ContentPage.ToolbarItems>
+    </ContentPage.ToolbarItems>-->
     <Grid>
-        <StackLayout Padding="24">
-            <Label Text="Records per Page" />
+        <StackLayout>
+            <!--<Label Text="Records per Page" />
             <Entry Text="{Binding RecordPerPage}" />
             <Label Text="Current Page" />
             <Entry Text="{Binding Page}" />
             <Label Text="Number of Pages" />
-            <Entry IsEnabled="False" Text="{Binding NumberPages}" />
-            <ListView x:Name="TodoListView" ItemsSource="{Binding TodoItems}">
+            <Entry IsEnabled="False" Text="{Binding NumberPages}" />-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button Command="{Binding PrevCommand}" Text="Prev" />
+                <StackLayout Grid.Column="1">
+                    <Label
+                        HorizontalOptions="FillAndExpand"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding RecordPerPage, StringFormat=' {0} Records Per Page'}" />
+                    <Label
+                        HorizontalOptions="FillAndExpand"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding Page, StringFormat='Page: {0}'}" />
+                    <Label
+                        HorizontalOptions="FillAndExpand"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding NumberPages, StringFormat=' {0} Pages'}" />
+                </StackLayout>
+                <Button
+                    Grid.Column="2"
+                    Command="{Binding NextCommand}"
+                    Text="Next" />
+            </Grid>
+
+            <ListView Margin="24" ItemsSource="{Binding TodoItems}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <Grid Padding="10">
                                 <Grid.ColumnDefinitions>
-                                    <!--<ColumnDefinition Width="Auto" />-->
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <!--<Label Text="Task Name: " />-->
                                 <Label Grid.Column="0" Text="{Binding Name}" />
                                 <Switch Grid.Column="1" IsToggled="{Binding IsComplete}" />
-                                <!--<Label
-                                    Grid.Column="2"
-                                    Text="{Binding IsComplete, Converter={StaticResource BooleanToObjectConverter}}"
-                                    TextColor="DarkBlue">
-                                    <Label.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ToggleCompleteCommand, Source={x:Reference TodoListView}}" CommandParameter="{Binding}" />
-                                    </Label.GestureRecognizers>
-                                </Label>-->
                             </Grid>
                         </ViewCell>
                     </DataTemplate>
