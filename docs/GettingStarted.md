@@ -43,7 +43,6 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
  
  ```
 
-
 ## Setup Asp.Net Core
 * NuGet: [Matcha.Sync.Api](http://www.nuget.org/packages/Matcha.Sync.Api) [![NuGet](https://img.shields.io/nuget/v/Matcha.Sync.Api.svg?label=NuGet)](https://www.nuget.org/packages/Xam.Plugins.Settings/)
 * `PM> Install-Package Matcha.Sync.Api`
@@ -88,14 +87,14 @@ public class TodoItemsController : BaseController<TodoItem>
  ```
 
 ## Setup OData Configure method
+
+MapODataServiceRouteBase method will automatically register all Controller derived from "BaseController".
+
  ```csharp
 public void Configure(IApplicationBuilder app, IHostingEnvironment env)
  {
-     if (env.IsDevelopment())
-     {
-         app.UseDeveloperExceptionPage();
-     }
-
+     //... Code here
+     
      app.UseMvc(b =>
      {
          //This will automatically register all OData derived from "BaseController"
@@ -104,9 +103,10 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
  }
  ```
 
-## More about OData
-We will not gonna cover it all here since this is very broad topic, I will just gonna link you here to get you started with OData Asp.Net Core [LINK HERE](https://blogs.msdn.microsoft.com/odatateam/2018/07/03/asp-net-core-odata-now-available/)
+Note: In our sample project we are using the In-Memory Database for our TodoItemContext, you can change it to use SqlServer or any other options available if you wanted to, If you want to know more about OData and Asp.Net Core [LINK HERE](https://blogs.msdn.microsoft.com/odatateam/2018/07/03/asp-net-core-odata-now-available/)
 
-You can take a look at our sample Asp.Net Core project for more reference [LINK HERE](https://github.com/winstongubantes/matchasync/tree/master/Sample/SampleApi)
+## Getting Started with the sample project
+
+There is a guide on how to run the sample project ([Mobile Guide](RunningMobile.md) and [Api Guide](RunningApi.md))  and the full source is also provided [LINK HERE](https://github.com/winstongubantes/matchasync/tree/master/Sample).
 
 <= Back to [Table of Contents](README.md)

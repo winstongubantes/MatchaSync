@@ -35,7 +35,7 @@ public IActionResult GetSalesTaxRate([FromODataUri] int postalCode)
 }
  ```
 
-For you reference please have a look at our example [LINK HERE](https://github.com/winstongubantes/matchasync/tree/master/Sample/SampleApi)
+For your reference please have a look at our example [LINK HERE](https://github.com/winstongubantes/matchasync/tree/master/Sample/SampleApi)
 
 ## Calling an OData Function in Mobile
 
