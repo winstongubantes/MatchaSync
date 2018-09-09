@@ -45,23 +45,17 @@ namespace SampleApi
 
             app.UseMvc(b =>
             {
-                //TODO: add action for OData ModelBuilder
-                b.MapODataServiceRouteBase("api", "api");
+                //This will automatically register all OData derived from "BaseController"
+                //to be registered
+                b.MapODataServiceRouteBase("api", "api", builder =>
+                {
+
+                    //custom functions should ne registered here
+                    builder.Function("GetSalesTaxRate")
+                        .Returns<double>()
+                        .Parameter<int>("PostalCode");
+                });
             });
         }
-
-        //private static IEdmModel GetEdmModel()
-        //{
-        //    ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-        //    builder.EntitySet<TodoItem>("TodoItems");
-
-        //    // New code:
-        //    builder.Function("GetSalesTaxRate")
-        //        .Returns<double>()
-        //        .Parameter<int>("PostalCode");
-
-
-        //    return builder.GetEdmModel();
-        //}
     }
 }

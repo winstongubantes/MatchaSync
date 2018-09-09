@@ -15,12 +15,13 @@ namespace Matcha.Sync.Api
         public static void MapODataServiceRouteBase(
             this IRouteBuilder routeBuilder, 
             string routeName, 
-            string routePrefix)
+            string routePrefix,
+            Action<ODataConventionModelBuilder> modelBuilder = null)
         {
             var asm = Assembly.GetCallingAssembly();
 
             //TODO: add action for OData ModelBuilder
-            routeBuilder.MapODataServiceRoute("api", "api", GetEdmModel(asm));
+            routeBuilder.MapODataServiceRoute("api", "api", GetEdmModel(asm, modelBuilder));
 
             routeBuilder.Select()
                 .MaxTop(100)
@@ -29,7 +30,7 @@ namespace Matcha.Sync.Api
                 .Count();
         }
 
-        private static IEdmModel GetEdmModel(Assembly asm)
+        private static IEdmModel GetEdmModel(Assembly asm, Action<ODataConventionModelBuilder> modelBuilder = null)
         {
             var builder = new ODataConventionModelBuilder();
             
@@ -40,6 +41,8 @@ namespace Matcha.Sync.Api
                 var type = @class.BaseType?.GenericTypeArguments[0];
                 builder.AddEntitySet(GetControllerNameFromType(@class.Name), builder.AddEntityType(type));
             }
+
+            modelBuilder?.Invoke(builder);
 
             return builder.GetEdmModel();
         }

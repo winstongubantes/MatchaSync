@@ -34,7 +34,7 @@ public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsAppli
  {
      public override bool FinishedLaunching(UIApplication app, NSDictionary options)
      {
-         MobileServiceClient.Init("http://YOUR_IP_HERE/SampleApi/odata");
+         MobileServiceClient.Init("http://YOUR_API_ADDRESS_HERE");
          
            ....// Code for init was here
          return base.FinishedLaunching(app, options);
@@ -98,13 +98,13 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 
      app.UseMvc(b =>
      {
-         //call MapODataServiceRouteBase
+         //This will automatically register all OData derived from "BaseController"
          b.MapODataServiceRouteBase("api", "api");
      });
  }
  ```
 
-## Setup OData supported queries
+## More about OData
 We will not gonna cover it all here since this is very broad topic, I will just gonna link you here to get you started with OData Asp.Net Core [LINK HERE](https://blogs.msdn.microsoft.com/odatateam/2018/07/03/asp-net-core-odata-now-available/)
 
 You can take a look at our sample Asp.Net Core project for more reference [LINK HERE](https://github.com/winstongubantes/matchasync/tree/master/Sample/SampleApi)
