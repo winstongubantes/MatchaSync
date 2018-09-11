@@ -3,7 +3,7 @@ A plugin library for offline data sync, provides an SDK library for both Client 
 
 ## Documentation
 
-Get started by reading through the [Matcha Sync Documentation](https://winstongubantes.github.io/matchasync/) 
+Get started by reading through the [Matcha Sync Documentation](https://winstongubantes.github.io/MatchaSync/) 
 
 ## Nuget
 
