@@ -4,15 +4,32 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\SampleMobile\SampleMobile\Constants\AppConstant.cs" Link="Constants\AppConstant.cs" />
+    <Compile Include="..\..\SampleMobile\SampleMobile\Converters\BooleanToObjectConverter.cs" Link="Converters\BooleanToObjectConverter.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Matcha.Sync.Mobile" Version="1.1.1004" />
     <PackageReference Include="Xam.Plugin.Connectivity" Version="3.2.0" />
     <PackageReference Include="Xamarin.Forms" Version="2.5.0.122203" />
-    <PackageReference Include="Prism.DryIoc.Forms" Version="7.0.0.396" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Constants\" />
+    <Folder Include="Converters\" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Update="Views\InfiniteScrollPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\MainPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ODataFunctionPage.xaml">
@@ -34,5 +51,4 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>

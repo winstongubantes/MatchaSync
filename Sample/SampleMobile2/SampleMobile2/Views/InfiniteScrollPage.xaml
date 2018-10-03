@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SampleMobile2.Views.InfiniteScrollPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:SampleMobile2.ViewModels;assembly=SampleMobile2">
+    <ContentPage.BindingContext>
+        <viewModels:InfiniteScrollPageViewModel />
+    </ContentPage.BindingContext>
+    <StackLayout>
+        <StackLayout Padding="24" VerticalOptions="FillAndExpand">
+            <ListView x:Name="TodoListView" ItemsSource="{Binding TodoItems}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <!--<ColumnDefinition Width="Auto" />-->
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <!--<Label Text="Task Name: " />-->
+                                <Label Grid.Column="0" Text="{Binding Name}" />
+                                <Switch Grid.Column="1" IsToggled="{Binding IsComplete}" />
+                                <!--<Label
+                                    Grid.Column="2"
+                                    Text="{Binding IsComplete, Converter={StaticResource BooleanToObjectConverter}}"
+                                    TextColor="DarkBlue">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ToggleCompleteCommand, Source={x:Reference TodoListView}}" CommandParameter="{Binding}" />
+                                    </Label.GestureRecognizers>
+                                </Label>-->
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+
+        <ActivityIndicator
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}"
+            VerticalOptions="End" />
+    </StackLayout>
+</ContentPage>

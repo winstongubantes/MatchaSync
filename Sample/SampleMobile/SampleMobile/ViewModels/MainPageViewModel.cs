@@ -1,20 +1,6 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
+﻿using System.Windows.Input;
+using Prism.Commands;
 using Prism.Navigation;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Matcha.Sync.Mobile;
-using Plugin.Connectivity.Abstractions;
-using Prism.Services;
-using SampleMobile.Models;
 using SampleMobile.Views;
 
 namespace SampleMobile.ViewModels
@@ -23,54 +9,73 @@ namespace SampleMobile.ViewModels
     {
         private readonly INavigationService _navigationService;
 
+        private ICommand _showFullSyncSampleCommand;
+
+        private ICommand _showFullSyncWebApiSampleCommand;
+
+        private ICommand _showInfiniteScrollPageCommand;
+
+        private ICommand _showODataCallCommand;
+
+        private ICommand _showPaginationPageCommand;
+
+        private ICommand _showStatusSyncSampleCommand;
+
+        private ICommand _showWebApiCallCommand;
+
 
         public MainPageViewModel(
             INavigationService navigationService)
             : base(navigationService)
         {
             _navigationService = navigationService;
-        } 
+        }
 
-        private ICommand _showFullSyncSampleCommand;
-        public ICommand ShowFullSyncSampleCommand => _showFullSyncSampleCommand ?? (_showFullSyncSampleCommand = new DelegateCommand(() =>
-        {
-            _navigationService.NavigateAsync(nameof(ODataQuerySyncPage));
-        }));
+        public ICommand ShowFullSyncSampleCommand => _showFullSyncSampleCommand ?? (_showFullSyncSampleCommand =
+                                                         new DelegateCommand(() =>
+                                                         {
+                                                             _navigationService.NavigateAsync(
+                                                                 nameof(ODataQuerySyncPage));
+                                                         }));
 
-        private ICommand _showFullSyncWebApiSampleCommand;
-        public ICommand ShowFullSyncWebApiSampleCommand => _showFullSyncWebApiSampleCommand ?? (_showFullSyncWebApiSampleCommand = new DelegateCommand(() =>
-        {
-            _navigationService.NavigateAsync(nameof(WebApiSyncPage));
-        }));
+        public ICommand ShowFullSyncWebApiSampleCommand => _showFullSyncWebApiSampleCommand ??
+                                                           (_showFullSyncWebApiSampleCommand = new DelegateCommand(() =>
+                                                           {
+                                                               _navigationService.NavigateAsync(
+                                                                   nameof(WebApiSyncPage));
+                                                           }));
 
-        private ICommand _showStatusSyncSampleCommand;
-        public ICommand ShowStatusSyncSampleCommand => _showStatusSyncSampleCommand ?? (_showStatusSyncSampleCommand = new DelegateCommand(() =>
-        {
-            _navigationService.NavigateAsync(nameof(ODataQueryStatusPage));
-        }));
+        public ICommand ShowStatusSyncSampleCommand => _showStatusSyncSampleCommand ?? (_showStatusSyncSampleCommand =
+                                                           new DelegateCommand(() =>
+                                                           {
+                                                               _navigationService.NavigateAsync(
+                                                                   nameof(ODataQueryStatusPage));
+                                                           }));
 
-        private ICommand _showODataCallCommand;
-        public ICommand ShowODataCallCommand => _showODataCallCommand ?? (_showODataCallCommand = new DelegateCommand(() =>
-        {
-            _navigationService.NavigateAsync(nameof(ODataFunctionPage));
-        }));
+        public ICommand ShowODataCallCommand => _showODataCallCommand ?? (_showODataCallCommand =
+                                                    new DelegateCommand(() =>
+                                                    {
+                                                        _navigationService.NavigateAsync(nameof(ODataFunctionPage));
+                                                    }));
 
-        private ICommand _showWebApiCallCommand;
-        public ICommand ShowWebApiCallCommand => _showWebApiCallCommand ?? (_showWebApiCallCommand = new DelegateCommand(() =>
-        {
-            _navigationService.NavigateAsync(nameof(WebApiMethodPage));
-        }));
+        public ICommand ShowWebApiCallCommand => _showWebApiCallCommand ?? (_showWebApiCallCommand =
+                                                     new DelegateCommand(() =>
+                                                     {
+                                                         _navigationService.NavigateAsync(nameof(WebApiMethodPage));
+                                                     }));
 
-        private ICommand _showPaginationPageCommand;
-        public ICommand ShowPaginationPageCommand => _showPaginationPageCommand ?? (_showPaginationPageCommand = new DelegateCommand(() =>
-        {
-            _navigationService.NavigateAsync(nameof(PaginationPage));
-        }));
+        public ICommand ShowPaginationPageCommand => _showPaginationPageCommand ?? (_showPaginationPageCommand =
+                                                         new DelegateCommand(() =>
+                                                         {
+                                                             _navigationService.NavigateAsync(
+                                                                 nameof(PaginationPage));
+                                                         }));
 
-        private ICommand _showInfiniteScrollPageCommand;
-        public ICommand ShowInfiniteScrollPageCommand => _showInfiniteScrollPageCommand ?? (_showInfiniteScrollPageCommand = new DelegateCommand(() =>
-        {
-            _navigationService.NavigateAsync(nameof(InfiniteScrollPage));
-        }));
+        public ICommand ShowInfiniteScrollPageCommand => _showInfiniteScrollPageCommand ??
+                                                         (_showInfiniteScrollPageCommand = new DelegateCommand(() =>
+                                                         {
+                                                             _navigationService.NavigateAsync(
+                                                                 nameof(InfiniteScrollPage));
+                                                         }));
     }
 }

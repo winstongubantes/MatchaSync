@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SampleMobile2.Views.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Mobile Sync Samples">
+
+    <StackLayout Padding="24" VerticalOptions="Center">
+        <Button Clicked="Button_OnClicked" Text="Todo List (OData)" />
+        <Button Clicked="Button_OnClicked" Text="Todo-Complete (OData)" />
+        <Button Clicked="Button_OnClicked" Text="Todo List (WebApi)" />
+        <Button Clicked="Button_OnClicked" Text="OData Function Call" />
+        <Button Clicked="Button_OnClicked" Text="WebApi Method Call" />
+        <Button Clicked="Button_OnClicked" Text="Pagination" />
+        <Button Clicked="Button_OnClicked" Text="Infinite Scroll" />
+    </StackLayout>
+</ContentPage>
